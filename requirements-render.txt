@@ -1,0 +1,34 @@
+# Core Flask
+flask==3.1.0
+flask-sqlalchemy==3.1.1
+flask-migrate==4.0.7
+flask-login==0.6.3
+flask-wtf==1.2.1
+flask-talisman==1.1.0
+flask-limiter[redis]==3.7.0
+flask-caching==2.3.0
+
+# Authentication
+authlib==1.3.1
+requests==2.32.3
+
+# Security & Validation
+bleach==6.1.0
+wtforms[email]==3.1.2
+
+# Database - Use psycopg instead of psycopg2-binary for better compatibility
+psycopg[binary]==3.2.3
+alembic==1.13.2
+
+# Cache & Rate Limiting
+redis==5.0.4
+
+# Web Server
+gunicorn==22.0.0
+
+# Utilities
+python-dotenv==1.0.1
+Pillow==10.4.0
+
+# Monitoring (optional)
+sentry-sdk[flask]==2.9.0
