@@ -1,0 +1,130 @@
+version: "3.9"
+
+services:
+  # ============================================
+  # Flask Application
+  # ============================================
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cv-builder-web
+    ports:
+      - "5000:8000"
+    env_file:
+      - .env
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - DATABASE_URL=postgresql://cvbuilder:devpassword@db:5432/cvbuilder
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      # Hot reload for development - mount source code
+      - ./app:/app/app
+      - ./migrations:/app/migrations
+      - ./scripts:/app/scripts
+    command: >
+      sh -c "
+        flask db upgrade &&
+        python scripts/seed_templates.py &&
+        gunicorn --bind 0.0.0.0:8000
+                 --workers 1
+                 --threads 2
+                 --reload
+                 --access-logfile -
+                 --error-logfile -
+                 --log-level debug
+                 'app:create_app()'
+      "
+    networks:
+      - cv-builder-network
+    restart: unless-stopped
+
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
+  db:
+    image: postgres:16-alpine
+    container_name: cv-builder-db
+    environment:
+      POSTGRES_DB: cvbuilder
+      POSTGRES_USER: cvbuilder
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cvbuilder"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cv-builder-network
+    restart: unless-stopped
+
+  # ============================================
+  # Redis Cache & Rate Limiting
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: cv-builder-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cv-builder-network
+    restart: unless-stopped
+
+  # ============================================
+  # pgAdmin (Database GUI - Optional)
+  # ============================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: cv-builder-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@cvbuilder.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - db
+    networks:
+      - cv-builder-network
+    profiles:
+      - tools
+    restart: unless-stopped
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local
+  pgadmin:
+    driver: local
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  cv-builder-network:
+    driver: bridge

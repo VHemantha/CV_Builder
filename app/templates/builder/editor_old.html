@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ cv.title }} - CV Builder{% endblock %}
+
+{% block extra_css %}
+<style>
+    body { margin: 0; padding: 0; background: #f5f5f5; }
+    .container { max-width: 100%; padding: 0; }
+
+    .editor-header {
+        background: white;
+        padding: 15px 30px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .editor-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        height: calc(100vh - 70px);
+    }
+    .form-panel {
+        background: white;
+        padding: 30px;
+        overflow-y: auto;
+        border-right: 1px solid #e0e0e0;
+    }
+    .preview-panel {
+        background: #525659;
+        padding: 30px;
+        overflow-y: auto;
+    }
+    .preview-iframe {
+        width: 100%;
+        min-height: 800px;
+        background: white;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+   .form-section {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .form-section h2 {
+        margin: 0 0 15px 0;
+        font-size: 1.3em;
+        color: #202124;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #5f6368;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 14px;
+    }
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+    }
+    .btn-primary { background: #4285f4; color: white; }
+    .btn-primary:hover { background: #3367d6; }
+    .btn-secondary { background: #f1f3f4; color: #202124; }
+    .btn-secondary:hover { background: #e8eaed; }
+    .btn-success { background: #34a853; color: white; }
+    .btn-danger { background: #ea4335; color: white; }
+
+    .save-indicator {
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        background: #e8f0fe;
+        color: #1967d2;
+    }
+    .multi-entry {
+        border: 1px solid #dadce0;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        background: white;
+    }
+    .multi-entry-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="editor-header">
+    <div>
+        <a href="/cv/dashboard" style="text-decoration: none; color: #5f6368;">← Back to Dashboard</a>
+        <h1 style="margin: 5px 0 0 0; font-size: 1.2em;">{{ cv.title }}</h1>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <span class="save-indicator" id="saveStatus">All changes saved</span>
+        <button onclick="printPreview()" class="btn btn-primary" title="Print CV to PDF using your browser">
+            🖨️ Print to PDF
+        </button>
+        <a href="/cv/{{ cv.id }}/download" class="btn btn-success" title="Direct PDF download (requires WeasyPrint)">
+            Download PDF
+        </a>
+    </div>
+</div>
+
+<div class="editor-layout">
+    <!-- Form Panel -->
+    <div class="form-panel">
+        <form id="cvForm" onsubmit="return false;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- Personal Information -->
+            <div class="form-section" id="personal-section">
+                <h2>Personal Information</h2>
+                {% set personal = cv.sections.filter_by(section_type='personal').first() %}
+                {% if personal %}
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="personal.name" value="{{ personal.content.name or '' }}" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="personal.email" value="{{ personal.content.email or '' }}" placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" name="personal.phone" value="{{ personal.content.phone or '' }}" placeholder="+1 (555) 123-4567">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="personal.location" value="{{ personal.content.location or '' }}" placeholder="San Francisco, CA">
+                </div>
+                <div class="form-group">
+                    <label>Professional Headline</label>
+                    <input type="text" name="personal.headline" value="{{ personal.content.headline or '' }}" placeholder="Senior Software Engineer">
+                </div>
+                <div class="form-group">
+                    <label>LinkedIn URL</label>
+                    <input type="url" name="personal.linkedin" value="{{ personal.content.linkedin or '' }}" placeholder="https://linkedin.com/in/johndoe">
+                </div>
+                <div class="form-group">
+                    <label>GitHub URL</label>
+                    <input type="url" name="personal.github" value="{{ personal.content.github or '' }}" placeholder="https://github.com/johndoe">
+                </div>
+                <div class="form-group">
+                    <label>Portfolio URL</label>
+                    <input type="url" name="personal.portfolio" value="{{ personal.content.portfolio or '' }}" placeholder="https://johndoe.com">
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Summary/Objective -->
+            <div class="form-section">
+                <h2>Professional Summary</h2>
+                <div class="form-group">
+                    <textarea name="summary" placeholder="Brief overview of your professional background, key skills, and career objectives...">{% set summary = cv.sections.filter_by(section_type='summary').first() %}{% if summary %}{{ summary.content.text or '' }}{% endif %}</textarea>
+                    <small style="color: #5f6368;">2-3 sentences highlighting your expertise and value</small>
+                </div>
+                <button type="button" onclick="addOrUpdateSection('summary')" class="btn btn-secondary">
+                    {% if cv.sections.filter_by(section_type='summary').first() %}Update{% else %}Add{% endif %} Summary
+                </button>
+            </div>
+
+            <!-- Experience -->
+            <div class="form-section">
+                <h2>Work Experience</h2>
+                <div id="experienceEntries">
+                    {% for exp in cv.sections.filter_by(section_type='experience').all() %}
+                    <div class="multi-entry">
+                        <div class="form-group">
+                            <label>Job Title</label>
+                            <input type="text" data-section-id="{{ exp.id }}" name="exp_title" value="{{ exp.content.title or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Company</label>
+                            <input type="text" data-section-id="{{ exp.id }}" name="exp_company" value="{{ exp.content.company or '' }}">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label>Start Date</label>
+                                <input type="text" data-section-id="{{ exp.id }}" name="exp_start" value="{{ exp.content.start_date or '' }}" placeholder="Jan 2020">
+                            </div>
+                            <div class="form-group">
+                                <label>End Date</label>
+                                <input type="text" data-section-id="{{ exp.id }}" name="exp_end" value="{{ exp.content.end_date or 'Present' }}" placeholder="Present">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" data-section-id="{{ exp.id }}" name="exp_location" value="{{ exp.content.location or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Description (one achievement per line)</label>
+                            <textarea data-section-id="{{ exp.id }}" name="exp_description">{{ exp.content.description or '' }}</textarea>
+                        </div>
+                        <button type="button" onclick="deleteSection('{{ exp.id }}')" class="btn btn-danger">Remove</button>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" onclick="addExperience()" class="btn btn-secondary">+ Add Experience</button>
+            </div>
+
+            <!-- Education -->
+            <div class="form-section">
+                <h2>Education</h2>
+                <div id="educationEntries">
+                    {% for edu in cv.sections.filter_by(section_type='education').all() %}
+                    <div class="multi-entry">
+                        <div class="form-group">
+                            <label>Degree</label>
+                            <input type="text" data-section-id="{{ edu.id }}" name="edu_degree" value="{{ edu.content.degree or '' }}" placeholder="Bachelor of Science">
+                        </div>
+                        <div class="form-group">
+                            <label>Field of Study</label>
+                            <input type="text" data-section-id="{{ edu.id }}" name="edu_field" value="{{ edu.content.field or '' }}" placeholder="Computer Science">
+                        </div>
+                        <div class="form-group">
+                            <label>Institution</label>
+                            <input type="text" data-section-id="{{ edu.id }}" name="edu_institution" value="{{ edu.content.institution or '' }}">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label>Graduation Year</label>
+                                <input type="text" data-section-id="{{ edu.id }}" name="edu_year" value="{{ edu.content.year or '' }}" placeholder="2020">
+                            </div>
+                            <div class="form-group">
+                                <label>GPA (optional)</label>
+                                <input type="text" data-section-id="{{ edu.id }}" name="edu_gpa" value="{{ edu.content.gpa or '' }}" placeholder="3.8/4.0">
+                            </div>
+                        </div>
+                        <button type="button" onclick="deleteSection('{{ edu.id }}')" class="btn btn-danger">Remove</button>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" onclick="addEducation()" class="btn btn-secondary">+ Add Education</button>
+            </div>
+
+            <!-- Skills -->
+            <div class="form-section">
+                <h2>Skills</h2>
+                {% set skills = cv.sections.filter_by(section_type='skills').first() %}
+                <div class="form-group">
+                    <label>Technical Skills</label>
+                    <input type="text" name="skills.technical" value="{% if skills %}{{ skills.content.technical or '' }}{% endif %}"
+                           placeholder="Python, JavaScript, React, Docker (comma-separated)">
+                </div>
+                <div class="form-group">
+                    <label>Soft Skills</label>
+                    <input type="text" name="skills.soft" value="{% if skills %}{{ skills.content.soft or '' }}{% endif %}"
+                           placeholder="Leadership, Communication, Problem Solving (comma-separated)">
+                </div>
+                <div class="form-group">
+                    <label>Languages</label>
+                    <input type="text" name="skills.languages" value="{% if skills %}{{ skills.content.languages or '' }}{% endif %}"
+                           placeholder="English (Native), Spanish (Fluent)">
+                </div>
+                <button type="button" onclick="addOrUpdateSection('skills')" class="btn btn-secondary">
+                    {% if skills %}Update{% else %}Add{% endif %} Skills
+                </button>
+            </div>
+
+            <button type="button" onclick="saveCV()" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 16px;">
+                Save All Changes
+            </button>
+        </form>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="preview-panel">
+        <iframe id="previewFrame" class="preview-iframe" src="/cv/{{ cv.id }}/preview"></iframe>
+    </div>
+</div>
+
+<script>
+const CV_ID = '{{ cv.id }}';
+const CSRF_TOKEN = '{{ csrf_token() }}';
+
+// Print preview function
+function printPreview() {
+    // Open preview in new window for better print experience
+    const printWindow = window.open(`/cv/${CV_ID}/preview`, '_blank', 'width=800,height=600');
+
+    // Wait for window to load, then trigger print dialog
+    if (printWindow) {
+        printWindow.onload = function() {
+            setTimeout(() => {
+                printWindow.print();
+            }, 250);
+        };
+    } else {
+        // Popup blocked - fallback to printing the iframe
+        alert('Please allow popups for this site, or right-click the preview and select Print');
+        try {
+            const iframe = document.getElementById('previewFrame');
+            iframe.contentWindow.print();
+        } catch (e) {
+            console.error('Print failed:', e);
+        }
+    }
+}
+</script>
+<script src="/static/js/cv_builder.js"></script>
+{% endblock %}

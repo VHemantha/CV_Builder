@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cv.title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        /* Remove browser print headers/footers */
+        @media print {
+            @page {
+                margin: 15mm;
+                size: A4;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        body {
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #1a1a1a;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+
+        /* Header - Executive Style with Sidebar Color */
+        .header {
+            border-left: 5px solid #2c3e50;
+            padding-left: 20px;
+            margin-bottom: 25px;
+        }
+
+        .name {
+            font-size: 28pt;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            letter-spacing: 1px;
+        }
+
+        .headline {
+            font-size: 13pt;
+            color: #555;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .contact {
+            font-size: 10pt;
+            color: #555;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px 20px;
+        }
+
+        .contact-item {
+            text-decoration: none;
+            color: #555;
+        }
+
+        .contact-separator {
+            color: #999;
+        }
+
+        /* Section Headings - Executive Style */
+        .section {
+            margin-bottom: 22px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 5px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* Summary */
+        .summary {
+            text-align: justify;
+            margin-bottom: 8px;
+            font-size: 11pt;
+            line-height: 1.7;
+        }
+
+        /* Experience & Education Entries */
+        .entry {
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .entry-title {
+            font-weight: 700;
+            font-size: 12pt;
+            color: #2c3e50;
+        }
+
+        .entry-date {
+            font-size: 10pt;
+            color: #666;
+            font-style: italic;
+        }
+
+        .entry-subtitle {
+            font-size: 11pt;
+            color: #555;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .entry-location {
+            font-size: 10pt;
+            color: #777;
+            margin-bottom: 6px;
+            font-style: italic;
+        }
+
+        .entry-description ul {
+            margin-left: 25px;
+            list-style-type: disc;
+        }
+
+        .entry-description li {
+            margin-bottom: 4px;
+            text-align: justify;
+        }
+
+        /* Skills - Professional Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 20px;
+            align-items: baseline;
+        }
+
+        .skill-category {
+            font-weight: 700;
+            color: #2c3e50;
+            white-space: nowrap;
+        }
+
+        .skill-list {
+            text-align: left;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% set personal = cv.sections.filter_by(section_type='personal').first() %}
+
+    <!-- Header -->
+    {% if personal %}
+    <div class="header">
+        {% if personal.content.name %}
+        <div class="name">{{ personal.content.name }}</div>
+        {% endif %}
+
+        {% if personal.content.headline %}
+        <div class="headline">{{ personal.content.headline }}</div>
+        {% endif %}
+
+        <div class="contact">
+            {% if personal.content.email %}
+            <span class="contact-item">{{ personal.content.email }}</span>
+            {% endif %}
+            {% if personal.content.phone %}
+            {% if personal.content.email %}<span class="contact-separator">•</span>{% endif %}
+            <span class="contact-item">{{ personal.content.phone }}</span>
+            {% endif %}
+            {% if personal.content.location %}
+            {% if personal.content.email or personal.content.phone %}<span class="contact-separator">•</span>{% endif %}
+            <span class="contact-item">{{ personal.content.location }}</span>
+            {% endif %}
+            {% if personal.content.linkedin %}
+            {% if personal.content.email or personal.content.phone or personal.content.location %}<span class="contact-separator">•</span>{% endif %}
+            <a href="{{ personal.content.linkedin }}" class="contact-item">LinkedIn</a>
+            {% endif %}
+            {% if personal.content.github %}
+            <span class="contact-separator">•</span>
+            <a href="{{ personal.content.github }}" class="contact-item">GitHub</a>
+            {% endif %}
+            {% if personal.content.portfolio %}
+            <span class="contact-separator">•</span>
+            <a href="{{ personal.content.portfolio }}" class="contact-item">Portfolio</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Professional Summary -->
+    {% set summary = cv.sections.filter_by(section_type='summary').first() %}
+    {% if summary and summary.content.text %}
+    <div class="section">
+        <div class="section-title">EXECUTIVE SUMMARY</div>
+        <div class="summary">{{ summary.content.text }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Work Experience -->
+    {% set experiences = cv.sections.filter_by(section_type='experience').all() %}
+    {% if experiences %}
+    <div class="section">
+        <div class="section-title">PROFESSIONAL EXPERIENCE</div>
+        {% for exp in experiences %}
+        <div class="entry">
+            <div class="entry-header">
+                <div class="entry-title">{{ exp.content.title or 'Job Title' }}</div>
+                <div class="entry-date">
+                    {{ exp.content.start_date or 'Start' }} – {{ exp.content.end_date or 'Present' }}
+                </div>
+            </div>
+            <div class="entry-subtitle">{{ exp.content.company or 'Company Name' }}</div>
+            {% if exp.content.location %}
+            <div class="entry-location">{{ exp.content.location }}</div>
+            {% endif %}
+            {% if exp.content.description %}
+            <div class="entry-description">
+                <ul>
+                    {% for line in exp.content.description.split('\n') %}
+                    {% if line.strip() %}
+                    <li>{{ line.strip() }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Education -->
+    {% set educations = cv.sections.filter_by(section_type='education').all() %}
+    {% if educations %}
+    <div class="section">
+        <div class="section-title">EDUCATION</div>
+        {% for edu in educations %}
+        <div class="entry">
+            <div class="entry-header">
+                <div class="entry-title">{{ edu.content.degree or 'Degree' }}</div>
+                <div class="entry-date">{{ edu.content.year or 'Year' }}</div>
+            </div>
+            <div class="entry-subtitle">
+                {% if edu.content.field %}{{ edu.content.field }} — {% endif %}{{ edu.content.institution or 'Institution' }}
+            </div>
+            {% if edu.content.gpa %}
+            <div class="entry-location">GPA: {{ edu.content.gpa }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Skills -->
+    {% set skills = cv.sections.filter_by(section_type='skills').first() %}
+    {% if skills and (skills.content.technical or skills.content.soft or skills.content.languages) %}
+    <div class="section">
+        <div class="section-title">CORE COMPETENCIES</div>
+        <div class="skills-grid">
+            {% if skills.content.technical %}
+            <div class="skill-category">Technical:</div>
+            <div class="skill-list">{{ skills.content.technical }}</div>
+            {% endif %}
+
+            {% if skills.content.soft %}
+            <div class="skill-category">Leadership:</div>
+            <div class="skill-list">{{ skills.content.soft }}</div>
+            {% endif %}
+
+            {% if skills.content.languages %}
+            <div class="skill-category">Languages:</div>
+            <div class="skill-list">{{ skills.content.languages }}</div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>

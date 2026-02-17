@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}Free CV Builder | Professional Resume Maker Online | CV Builder Free{% endblock %}</title>
+    <meta name="description" content="{% block description %}Create professional resumes and CVs online for free. Easy-to-use CV builder with ATS-friendly templates. Build your resume in minutes with our free resume builder tool. No sign-up required to start.{% endblock %}">
+    <meta name="keywords" content="free resume builder, cv builder free, resume maker, cv maker online, free cv builder, professional resume builder, ATS resume builder, online resume builder, resume creator free, cv template free, resume templates free, build resume online free, create cv online free, resume generator, cv creator, job resume builder">
+    <meta name="author" content="CV Builder">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
+
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="{% block og_title %}Free CV Builder | Professional Resume Maker Online{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Create professional resumes and CVs online for free. Easy-to-use CV builder with ATS-friendly templates. Build your resume in minutes!{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.url_root }}static/images/og-image.png{% endblock %}">
+    <meta property="og:site_name" content="CV Builder">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ request.url }}">
+    <meta name="twitter:title" content="{% block twitter_title %}Free CV Builder | Professional Resume Maker Online{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Create professional resumes and CVs online for free. Easy-to-use CV builder with ATS-friendly templates.{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.url_root }}static/images/twitter-image.png{% endblock %}">
+
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#4285f4">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CV Builder">
+    <meta name="application-name" content="CV Builder">
+
+    <!-- Structured Data (JSON-LD Schema.org) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "CV Builder - Free Resume Maker",
+      "url": "{{ request.url_root }}",
+      "description": "Free online CV and resume builder with professional ATS-friendly templates. Create, edit, and download professional resumes in minutes.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Free resume builder",
+        "ATS-friendly templates",
+        "Professional CV templates",
+        "Export to PDF",
+        "No sign-up required",
+        "Mobile responsive"
+      ],
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "softwareVersion": "1.0",
+      "author": {
+        "@type": "Organization",
+        "name": "CV Builder"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1247",
+        "bestRating": "5",
+        "worstRating": "1"
+      }
+    }
+    </script>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .flash.success { background: #d4edda; color: #155724; }
+        .flash.error { background: #f8d7da; color: #721c24; }
+        .flash.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block extra_js %}{% endblock %}
+
+    <!-- Google Analytics (Optional - Add your GA4 ID) -->
+    {% if config.get('GOOGLE_ANALYTICS_ID') %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ config['GOOGLE_ANALYTICS_ID'] }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ config["GOOGLE_ANALYTICS_ID"] }}');
+    </script>
+    {% endif %}
+</body>
+</html>

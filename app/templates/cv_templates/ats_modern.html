@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cv.title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        /* Remove browser print headers/footers */
+        @media print {
+            @page {
+                margin: 15mm;
+                size: A4;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.5;
+            color: #2d3748;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+
+        /* Header - Modern Centered Design */
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #4299e1;
+        }
+
+        .name {
+            font-size: 26pt;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #1a202c;
+            letter-spacing: 0.5px;
+        }
+
+        .headline {
+            font-size: 12pt;
+            color: #4299e1;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .contact {
+            font-size: 9.5pt;
+            color: #4a5568;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px 12px;
+        }
+
+        .contact-item {
+            text-decoration: none;
+            color: #4a5568;
+        }
+
+        .contact-item:hover {
+            color: #4299e1;
+        }
+
+        .contact-separator {
+            color: #cbd5e0;
+        }
+
+        /* Section Headings - Modern Accent Style */
+        .section {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 12pt;
+            font-weight: 700;
+            color: #1a202c;
+            background: linear-gradient(to right, #edf2f7 0%, #ffffff 100%);
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #4299e1;
+            letter-spacing: 0.5px;
+        }
+
+        /* Summary */
+        .summary {
+            text-align: justify;
+            margin-bottom: 8px;
+            color: #4a5568;
+            line-height: 1.7;
+        }
+
+        /* Experience & Education Entries - Modern Card Style */
+        .entry {
+            margin-bottom: 14px;
+            padding-left: 10px;
+            border-left: 2px solid #e2e8f0;
+            page-break-inside: avoid;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .entry-title {
+            font-weight: 700;
+            font-size: 11.5pt;
+            color: #2d3748;
+        }
+
+        .entry-date {
+            font-size: 9.5pt;
+            color: #718096;
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .entry-subtitle {
+            font-size: 10.5pt;
+            color: #4299e1;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .entry-location {
+            font-size: 9.5pt;
+            color: #718096;
+            margin-bottom: 6px;
+        }
+
+        .entry-description ul {
+            margin-left: 20px;
+            list-style-type: none;
+        }
+
+        .entry-description li {
+            margin-bottom: 3px;
+            position: relative;
+            padding-left: 5px;
+        }
+
+        .entry-description li::before {
+            content: "▸";
+            position: absolute;
+            left: -15px;
+            color: #4299e1;
+            font-weight: bold;
+        }
+
+        /* Skills - Modern Pill Style */
+        .skills-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .skill-row {
+            display: flex;
+            gap: 10px;
+            align-items: baseline;
+        }
+
+        .skill-category {
+            font-weight: 700;
+            color: #2d3748;
+            min-width: 90px;
+            font-size: 10pt;
+        }
+
+        .skill-list {
+            flex: 1;
+            color: #4a5568;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .contact-item:hover {
+                color: #4a5568;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% set personal = cv.sections.filter_by(section_type='personal').first() %}
+
+    <!-- Header -->
+    {% if personal %}
+    <div class="header">
+        {% if personal.content.name %}
+        <div class="name">{{ personal.content.name }}</div>
+        {% endif %}
+
+        {% if personal.content.headline %}
+        <div class="headline">{{ personal.content.headline }}</div>
+        {% endif %}
+
+        <div class="contact">
+            {% if personal.content.email %}
+            <span class="contact-item">{{ personal.content.email }}</span>
+            {% endif %}
+            {% if personal.content.phone %}
+            {% if personal.content.email %}<span class="contact-separator">|</span>{% endif %}
+            <span class="contact-item">{{ personal.content.phone }}</span>
+            {% endif %}
+            {% if personal.content.location %}
+            {% if personal.content.email or personal.content.phone %}<span class="contact-separator">|</span>{% endif %}
+            <span class="contact-item">{{ personal.content.location }}</span>
+            {% endif %}
+            {% if personal.content.linkedin %}
+            {% if personal.content.email or personal.content.phone or personal.content.location %}<span class="contact-separator">|</span>{% endif %}
+            <a href="{{ personal.content.linkedin }}" class="contact-item">LinkedIn</a>
+            {% endif %}
+            {% if personal.content.github %}
+            <span class="contact-separator">|</span>
+            <a href="{{ personal.content.github }}" class="contact-item">GitHub</a>
+            {% endif %}
+            {% if personal.content.portfolio %}
+            <span class="contact-separator">|</span>
+            <a href="{{ personal.content.portfolio }}" class="contact-item">Portfolio</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Professional Summary -->
+    {% set summary = cv.sections.filter_by(section_type='summary').first() %}
+    {% if summary and summary.content.text %}
+    <div class="section">
+        <div class="section-title">Professional Summary</div>
+        <div class="summary">{{ summary.content.text }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Work Experience -->
+    {% set experiences = cv.sections.filter_by(section_type='experience').all() %}
+    {% if experiences %}
+    <div class="section">
+        <div class="section-title">Work Experience</div>
+        {% for exp in experiences %}
+        <div class="entry">
+            <div class="entry-header">
+                <div class="entry-title">{{ exp.content.title or 'Job Title' }}</div>
+                <div class="entry-date">
+                    {{ exp.content.start_date or 'Start' }} – {{ exp.content.end_date or 'Present' }}
+                </div>
+            </div>
+            <div class="entry-subtitle">{{ exp.content.company or 'Company Name' }}</div>
+            {% if exp.content.location %}
+            <div class="entry-location">📍 {{ exp.content.location }}</div>
+            {% endif %}
+            {% if exp.content.description %}
+            <div class="entry-description">
+                <ul>
+                    {% for line in exp.content.description.split('\n') %}
+                    {% if line.strip() %}
+                    <li>{{ line.strip() }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Education -->
+    {% set educations = cv.sections.filter_by(section_type='education').all() %}
+    {% if educations %}
+    <div class="section">
+        <div class="section-title">Education</div>
+        {% for edu in educations %}
+        <div class="entry">
+            <div class="entry-header">
+                <div class="entry-title">{{ edu.content.degree or 'Degree' }}</div>
+                <div class="entry-date">{{ edu.content.year or 'Year' }}</div>
+            </div>
+            <div class="entry-subtitle">
+                {% if edu.content.field %}{{ edu.content.field }} — {% endif %}{{ edu.content.institution or 'Institution' }}
+            </div>
+            {% if edu.content.gpa %}
+            <div class="entry-location">GPA: {{ edu.content.gpa }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Skills -->
+    {% set skills = cv.sections.filter_by(section_type='skills').first() %}
+    {% if skills and (skills.content.technical or skills.content.soft or skills.content.languages) %}
+    <div class="section">
+        <div class="section-title">Skills & Expertise</div>
+        <div class="skills-container">
+            {% if skills.content.technical %}
+            <div class="skill-row">
+                <div class="skill-category">Technical:</div>
+                <div class="skill-list">{{ skills.content.technical }}</div>
+            </div>
+            {% endif %}
+
+            {% if skills.content.soft %}
+            <div class="skill-row">
+                <div class="skill-category">Soft Skills:</div>
+                <div class="skill-list">{{ skills.content.soft }}</div>
+            </div>
+            {% endif %}
+
+            {% if skills.content.languages %}
+            <div class="skill-row">
+                <div class="skill-category">Languages:</div>
+                <div class="skill-list">{{ skills.content.languages }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>

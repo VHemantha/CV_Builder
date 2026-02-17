@@ -1,0 +1,535 @@
+{% extends "base.html" %}
+
+{% block title %}Free CV Builder Online | Professional Resume Maker & Templates - CV Builder{% endblock %}
+
+{% block description %}Build your professional resume for free with our easy-to-use CV builder. Choose from ATS-friendly templates, create stunning CVs in minutes. No hidden costs, no sign-up required. Best free resume builder 2026.{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary: #4285f4;
+        --primary-dark: #3367d6;
+        --success: #34a853;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-900: #111827;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background: white;
+    }
+
+    .container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 20px;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 48px;
+        margin: 0 0 20px 0;
+        font-weight: 700;
+        line-height: 1.2;
+        color: white;
+    }
+
+    .hero .subtitle {
+        font-size: 24px;
+        margin: 0 0 30px 0;
+        opacity: 0.95;
+    }
+
+    .hero p {
+        font-size: 18px;
+        max-width: 700px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+        opacity: 0.9;
+    }
+
+    .cta-button {
+        display: inline-block;
+        background: white;
+        color: #667eea;
+        padding: 18px 40px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 18px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+        transition: transform 0.2s;
+    }
+
+    .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    /* Features Section */
+    .features {
+        padding: 80px 20px;
+        background: var(--gray-50);
+    }
+
+    .features h2 {
+        text-align: center;
+        font-size: 36px;
+        margin: 0 0 50px 0;
+        color: var(--gray-900);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .feature-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+        font-size: 22px;
+        margin: 0 0 15px 0;
+        color: var(--gray-900);
+    }
+
+    .feature-card p {
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* SEO Content Section */
+    .seo-content {
+        padding: 80px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .seo-content h2 {
+        font-size: 36px;
+        margin: 0 0 30px 0;
+        color: var(--gray-900);
+    }
+
+    .seo-content h3 {
+        font-size: 28px;
+        margin: 40px 0 20px 0;
+        color: var(--gray-900);
+    }
+
+    .seo-content p {
+        font-size: 18px;
+        line-height: 1.8;
+        color: #444;
+        margin: 0 0 20px 0;
+    }
+
+    .seo-content ul {
+        font-size: 18px;
+        line-height: 1.8;
+        color: #444;
+        margin: 0 0 20px 0;
+        padding-left: 30px;
+    }
+
+    .seo-content li {
+        margin-bottom: 10px;
+    }
+
+    /* Templates Showcase */
+    .templates {
+        padding: 80px 20px;
+        background: var(--gray-50);
+    }
+
+    .templates h2 {
+        text-align: center;
+        font-size: 36px;
+        margin: 0 0 50px 0;
+        color: var(--gray-900);
+    }
+
+    .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .template-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+
+    .template-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .template-preview {
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 64px;
+    }
+
+    .template-preview.clean {
+        background: linear-gradient(135deg, #434343 0%, #000000 100%);
+    }
+
+    .template-preview.modern {
+        background: linear-gradient(135deg, #4299e1 0%, #2563eb 100%);
+    }
+
+    .template-preview.executive {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    }
+
+    .template-info {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .template-info h3 {
+        margin: 0 0 10px 0;
+        font-size: 20px;
+        color: var(--gray-900);
+    }
+
+    .template-info p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 20px;
+        text-align: center;
+    }
+
+    .cta-section h2 {
+        font-size: 42px;
+        margin: 0 0 20px 0;
+        color: white;
+    }
+
+    .cta-section p {
+        font-size: 20px;
+        margin: 0 0 40px 0;
+        opacity: 0.9;
+    }
+
+    /* FAQ Section */
+    .faq {
+        padding: 80px 20px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .faq h2 {
+        text-align: center;
+        font-size: 36px;
+        margin: 0 0 50px 0;
+        color: var(--gray-900);
+    }
+
+    .faq-item {
+        margin-bottom: 30px;
+        background: var(--gray-50);
+        padding: 25px;
+        border-radius: 8px;
+    }
+
+    .faq-item h3 {
+        font-size: 22px;
+        margin: 0 0 15px 0;
+        color: var(--gray-900);
+    }
+
+    .faq-item p {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #444;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 32px;
+        }
+        .hero .subtitle {
+            font-size: 18px;
+        }
+        .features h2, .templates h2, .seo-content h2, .faq h2 {
+            font-size: 28px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <h1>Free CV Builder - Create Professional Resumes Online</h1>
+    <p class="subtitle">Build Your Dream Career with Our Free Resume Maker</p>
+    <p>Create stunning, ATS-friendly resumes in minutes with our powerful yet simple CV builder. Completely free, no hidden charges, no credit card required. Start building your professional resume today!</p>
+    <a href="/cv/dashboard" class="cta-button">Start Building Your Free Resume →</a>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <h2>Why Choose Our Free CV Builder?</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🆓</div>
+            <h3>100% Free Forever</h3>
+            <p>Our resume builder is completely free to use. No premium tiers, no hidden costs. Create unlimited CVs and download them as PDF absolutely free.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>ATS-Friendly Templates</h3>
+            <p>All our CV templates are optimized for Applicant Tracking Systems (ATS). Increase your chances of getting past automated screening and landing interviews.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3>Professional Templates</h3>
+            <p>Choose from beautiful, professionally designed resume templates. Modern, executive, and clean designs to match any industry or career level.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚙️</div>
+            <h3>Easy to Use</h3>
+            <p>Our intuitive CV builder makes creating resumes simple. Fill in your information, choose a template, and download. No design skills needed!</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Works Anywhere</h3>
+            <p>Create your resume on any device - desktop, tablet, or mobile. Our responsive design ensures a seamless experience across all screen sizes.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🚀</div>
+            <h3>Instant PDF Download</h3>
+            <p>Download your professional resume as a PDF instantly. Print-ready format that looks great both on screen and on paper.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Templates Showcase -->
+<section class="templates">
+    <h2>Professional Resume Templates - 100% Free</h2>
+    <div class="templates-grid">
+        <div class="template-card">
+            <div class="template-preview clean">📄</div>
+            <div class="template-info">
+                <h3>ATS Clean</h3>
+                <p>Minimalist design optimized for ATS systems. Perfect for corporate and tech jobs.</p>
+            </div>
+        </div>
+        <div class="template-card">
+            <div class="template-preview modern">📄</div>
+            <div class="template-info">
+                <h3>ATS Modern</h3>
+                <p>Contemporary design with vibrant colors. Great for creative and startup roles.</p>
+            </div>
+        </div>
+        <div class="template-card">
+            <div class="template-preview executive">📄</div>
+            <div class="template-info">
+                <h3>ATS Executive</h3>
+                <p>Professional serif design for senior positions and executive roles.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SEO Content Section -->
+<section class="seo-content">
+    <h2>The Best Free Resume Builder Online - CV Maker 2026</h2>
+
+    <p>Looking for a <strong>free resume builder</strong> that actually works? You've found it! Our CV builder is designed to help job seekers create professional, ATS-friendly resumes without spending a dime. Whether you're a recent graduate, experienced professional, or career changer, our <strong>free CV maker</strong> has everything you need to land your dream job.</p>
+
+    <h3>What is a Resume Builder?</h3>
+    <p>A <strong>resume builder</strong> (also called a <strong>CV builder</strong> or <strong>resume maker</strong>) is an online tool that helps you create professional resumes quickly and easily. Instead of starting from scratch in a word processor, our <strong>online resume builder</strong> provides templates, formatting, and guidance to help you craft the perfect CV.</p>
+
+    <h3>Key Features of Our Free CV Builder:</h3>
+    <ul>
+        <li><strong>Free Resume Templates:</strong> Choose from professionally designed templates that are 100% free to use and download</li>
+        <li><strong>ATS-Friendly Formatting:</strong> Our templates are optimized to pass Applicant Tracking Systems used by 98% of Fortune 500 companies</li>
+        <li><strong>Real-Time Preview:</strong> See your resume update in real-time as you make changes</li>
+        <li><strong>PDF Export:</strong> Download your resume as a professional PDF with one click</li>
+        <li><strong>No Sign-Up Required:</strong> Start building immediately - no account creation needed</li>
+        <li><strong>Mobile-Friendly:</strong> Create your resume on any device, anywhere, anytime</li>
+        <li><strong>Privacy-First:</strong> Your data is secure and never shared with third parties</li>
+    </ul>
+
+    <h3>How to Create a Professional Resume with Our Free CV Builder:</h3>
+    <p>Creating a professional resume has never been easier. Follow these simple steps to build your CV in minutes:</p>
+    <ul>
+        <li><strong>Step 1:</strong> Click "Start Building Your Free Resume" and choose a template</li>
+        <li><strong>Step 2:</strong> Fill in your personal information, work experience, and education</li>
+        <li><strong>Step 3:</strong> Add your skills and customize your professional summary</li>
+        <li><strong>Step 4:</strong> Preview your resume in real-time</li>
+        <li><strong>Step 5:</strong> Download your professional resume as PDF</li>
+    </ul>
+
+    <h3>Why Use a Free Online Resume Builder?</h3>
+    <p>Building a resume from scratch can be time-consuming and frustrating. Our <strong>free resume creator</strong> solves common problems like:</p>
+    <ul>
+        <li><strong>Formatting Issues:</strong> No more wrestling with margins, spacing, and alignment</li>
+        <li><strong>ATS Compatibility:</strong> Ensure your resume gets past automated screening systems</li>
+        <li><strong>Professional Design:</strong> Access to designer-quality templates without hiring a professional</li>
+        <li><strong>Time Savings:</strong> Create a complete resume in 15 minutes instead of hours</li>
+        <li><strong>Cost Efficiency:</strong> Save hundreds compared to professional resume writing services</li>
+    </ul>
+
+    <h3>Best Practices for Resume Writing in 2026:</h3>
+    <p>To create the most effective resume using our <strong>CV builder free</strong> tool, follow these expert tips:</p>
+    <ul>
+        <li>Use action verbs to describe your accomplishments (achieved, led, developed, increased)</li>
+        <li>Quantify your achievements with numbers and percentages</li>
+        <li>Tailor your resume to each job application</li>
+        <li>Keep it concise - aim for 1-2 pages maximum</li>
+        <li>Use a clean, professional font and consistent formatting</li>
+        <li>Include relevant keywords from the job description</li>
+        <li>Proofread carefully for grammar and spelling errors</li>
+    </ul>
+
+    <h3>Who Should Use Our Free Resume Builder?</h3>
+    <p>Our <strong>professional resume builder</strong> is perfect for:</p>
+    <ul>
+        <li><strong>Recent Graduates:</strong> Create your first professional resume with ease</li>
+        <li><strong>Career Changers:</strong> Highlight transferable skills for a new industry</li>
+        <li><strong>Experienced Professionals:</strong> Update your resume with modern formatting</li>
+        <li><strong>Job Seekers:</strong> Apply to multiple positions with customized resumes</li>
+        <li><strong>Freelancers:</strong> Showcase your portfolio of work and projects</li>
+        <li><strong>Students:</strong> Build internship and entry-level job applications</li>
+    </ul>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq">
+    <h2>Frequently Asked Questions - Free Resume Builder</h2>
+
+    <div class="faq-item">
+        <h3>Is this resume builder really free?</h3>
+        <p>Yes! Our CV builder is 100% free with no hidden charges, premium tiers, or credit card required. You can create unlimited resumes and download them all for free.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Do I need to create an account?</h3>
+        <p>No account is required to start building your resume. You can optionally sign in with Google to save your CVs and access them from any device.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Are these resume templates ATS-friendly?</h3>
+        <p>Absolutely! All our templates are optimized for Applicant Tracking Systems (ATS). They use standard formatting, clear section headers, and proper structure to ensure your resume gets past automated screening.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Can I download my resume as PDF?</h3>
+        <p>Yes! You can download your resume as a professional PDF file that's ready to email to employers or upload to job boards. The PDF is print-ready and looks great on all devices.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>How long does it take to create a resume?</h3>
+        <p>Most users complete their resume in 15-30 minutes. Our intuitive interface and pre-designed templates make the process quick and easy, even if you've never created a resume before.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Can I edit my resume after downloading?</h3>
+        <p>Yes! If you sign in with Google, your resumes are saved and you can edit them anytime. Make unlimited changes and download fresh PDFs whenever needed.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>What's the difference between a CV and a resume?</h3>
+        <p>In the US, a resume is typically 1-2 pages and used for most jobs. A CV (Curriculum Vitae) is longer and used for academic or research positions. Our builder works great for both! Outside the US, CV and resume are often used interchangeably.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Is my data secure?</h3>
+        <p>Yes, we take privacy seriously. Your data is encrypted and stored securely. We never sell or share your information with third parties. You can delete your data anytime.</p>
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="cta-section">
+    <h2>Ready to Build Your Professional Resume?</h2>
+    <p>Join thousands of job seekers who landed their dream jobs with our free CV builder</p>
+    <a href="/cv/dashboard" class="cta-button">Create Your Free Resume Now →</a>
+</section>
+
+<!-- SEO Footer -->
+<footer style="background: #1a202c; color: white; padding: 60px 20px 20px; margin-top: 0;">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
+        <div>
+            <h3 style="font-size: 20px; margin: 0 0 20px 0; color: white;">CV Builder</h3>
+            <p style="line-height: 1.6; opacity: 0.8; margin: 0;">Create professional resumes and CVs online for free. ATS-friendly templates, instant PDF download, no sign-up required.</p>
+        </div>
+        <div>
+            <h4 style="font-size: 16px; margin: 0 0 15px 0; color: white;">Quick Links</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Home</a></li>
+                <li><a href="/cv/dashboard" style="color: rgba(255,255,255,0.8); text-decoration: none;">Dashboard</a></li>
+                <li><a href="/cv/dashboard" style="color: rgba(255,255,255,0.8); text-decoration: none;">Create Resume</a></li>
+                <li><a href="/auth/google" style="color: rgba(255,255,255,0.8); text-decoration: none;">Sign In</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="font-size: 16px; margin: 0 0 15px 0; color: white;">Resources</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Free Resume Templates</a></li>
+                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Resume Writing Tips</a></li>
+                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">ATS Guide</a></li>
+                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">FAQ</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="font-size: 16px; margin: 0 0 15px 0; color: white;">Popular Searches</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
+                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Free Resume Builder</a></li>
+                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">CV Builder Free</a></li>
+                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Resume Maker Online</a></li>
+                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Professional CV Templates</a></li>
+            </ul>
+        </div>
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; text-align: center;">
+        <p style="opacity: 0.6; margin: 0; font-size: 14px;">
+            © 2026 CV Builder. Free Resume Builder & Professional CV Maker Online. All rights reserved.<br>
+            <span style="font-size: 12px;">Keywords: free resume builder, cv builder free, resume maker, professional resume builder, online cv maker, ATS resume templates</span>
+        </p>
+    </div>
+</footer>
+{% endblock %}
