@@ -18,17 +18,29 @@ class Config:
     APP_NAME = "CV Builder"
     APP_BASE_URL = os.environ.get("APP_BASE_URL", "http://localhost:5000")
 
-    # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", "postgresql://cvbuilder:devpassword@localhost:5432/cvbuilder"
-    )
+    # Database - Force SQLite (override PostgreSQL if present)
+    db_url = os.environ.get("DATABASE_URL", "sqlite:///cv_builder.db")
+
+    # Force SQLite: Replace any PostgreSQL URL with SQLite
+    if db_url and "postgres" in db_url:
+        db_url = "sqlite:///cv_builder.db"
+        print("⚠️ PostgreSQL URL detected - forcing SQLite for compatibility")
+
+    SQLALCHEMY_DATABASE_URI = db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_pre_ping": True,  # Verify connections before using
-        "pool_recycle": 300,  # Recycle connections after 5 minutes
-        "pool_size": 10,
-        "max_overflow": 20,
-    }
+
+    # Engine options - only use pooling for PostgreSQL
+    if "sqlite" not in db_url:
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            "pool_pre_ping": True,
+            "pool_recycle": 300,
+            "pool_size": 10,
+            "max_overflow": 20,
+        }
+    else:
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            "pool_pre_ping": False,
+        }
 
     # Redis (for caching and rate limiting)
     REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
