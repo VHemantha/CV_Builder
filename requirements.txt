@@ -17,7 +17,7 @@ bleach==6.1.0
 wtforms[email]==3.1.2
 
 # Database
-psycopg2-binary==2.9.9
+psycopg[binary]==3.2.3
 alembic==1.13.2
 
 # Cache & Rate Limiting
