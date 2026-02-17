@@ -1,5 +1,5 @@
 # ============================================
-# CV Builder - Render.com Blueprint
+# CV Builder - Render.com Blueprint (Updated with SEO)
 # ============================================
 # Infrastructure as Code for automated deployment
 # Docs: https://render.com/docs/blueprint-spec
@@ -52,6 +52,7 @@ services:
           property: connectionString
 
       # Base URL (set after first deploy)
+      # Example: https://cv-builder.onrender.com or your custom domain
       - key: APP_BASE_URL
         sync: false  # Must set manually in Render dashboard
 
@@ -83,13 +84,55 @@ services:
       - key: IP_HASH_SALT
         generateValue: true
 
-      # Optional: Sentry error tracking
+      # ============================================
+      # SEO & Analytics Configuration
+      # ============================================
+
+      # Google Analytics 4 (Recommended for SEO tracking)
+      # Get from: https://analytics.google.com
+      # Format: G-XXXXXXXXXX
+      - key: GOOGLE_ANALYTICS_ID
+        sync: false
+
+      # Google Search Console Verification (Optional)
+      # Get from: https://search.google.com/search-console
+      - key: GOOGLE_SEARCH_CONSOLE_VERIFICATION
+        sync: false
+
+      # Bing Webmaster Tools Verification (Optional)
+      # Get from: https://www.bing.com/webmasters
+      - key: BING_WEBMASTER_VERIFICATION
+        sync: false
+
+      # ============================================
+      # Monitoring & Error Tracking
+      # ============================================
+
+      # Sentry error tracking (Recommended for production)
+      # Get from: https://sentry.io
       - key: SENTRY_DSN
         sync: false
 
-      # Optional: OpenAI for AI writing assistant
+      # ============================================
+      # Optional Features
+      # ============================================
+
+      # OpenAI for AI writing assistant (Optional)
+      # Get from: https://platform.openai.com
       - key: OPENAI_API_KEY
         sync: false
+
+      # ============================================
+      # Performance & Security
+      # ============================================
+
+      # Force HTTPS redirects
+      - key: TALISMAN_FORCE_HTTPS
+        value: "true"
+
+      # Gunicorn workers (2 for free tier, increase for paid plans)
+      - key: WEB_CONCURRENCY
+        value: "2"
 
 # ============================================
 # Databases
@@ -112,29 +155,154 @@ databases:
     ipAllowList: []
 
 # ============================================
-# Deployment Notes
+# Deployment & SEO Setup Instructions
 # ============================================
 #
-# After first deployment:
-# 1. Set APP_BASE_URL in Render dashboard (e.g., https://cv-builder.onrender.com)
-# 2. Configure Google OAuth:
-#    - Go to https://console.cloud.google.com/apis/credentials
-#    - Add authorized redirect URI: https://YOUR_APP_URL/auth/callback
-#    - Copy Client ID and Secret to Render env vars
-# 3. (Optional) Set SENTRY_DSN for error tracking
-# 4. (Optional) Set OPENAI_API_KEY if enabling AI writing assistant
+# STEP 1: Initial Deployment
+# ---------------------------
+# 1. Push code to GitHub
+# 2. Connect repository to Render
+# 3. Deploy using this blueprint
+# 4. Wait for services to start (5-10 minutes)
 #
-# Migration management:
-# - Migrations run automatically on deploy via docker-compose command
-# - To run manual migrations: `flask db upgrade` in Render shell
+# STEP 2: Configure Base URL
+# ---------------------------
+# After first successful deploy:
+# 1. Go to Render Dashboard → cv-builder service
+# 2. Environment tab → Add/Edit:
+#    APP_BASE_URL = https://YOUR-APP-NAME.onrender.com
+# 3. Save and redeploy
 #
-# Monitoring:
-# - App logs: Render dashboard → Logs tab
-# - Database metrics: Render dashboard → Database → Metrics
-# - Redis metrics: Render dashboard → Redis → Metrics
+# STEP 3: Configure Google OAuth
+# -------------------------------
+# 1. Go to: https://console.cloud.google.com/apis/credentials
+# 2. Create OAuth 2.0 Client ID
+# 3. Add authorized redirect URI:
+#    https://YOUR-APP-NAME.onrender.com/auth/callback
+# 4. Copy Client ID and Client Secret to Render env vars:
+#    GOOGLE_CLIENT_ID = your_client_id
+#    GOOGLE_CLIENT_SECRET = your_client_secret
+# 5. Save and redeploy
 #
-# Scaling:
-# - Free tier: 1 instance, sleeps after 15min inactivity
-# - Starter: Always-on, auto-scaling 1-3 instances
-# - Production: Use 'standard' plan with dedicated resources
+# STEP 4: SEO Configuration (Recommended)
+# ----------------------------------------
+# A. Google Analytics (Track traffic & conversions)
+#    1. Create GA4 property: https://analytics.google.com
+#    2. Get Measurement ID (starts with G-)
+#    3. Add to Render env: GOOGLE_ANALYTICS_ID = G-XXXXXXXXXX
+#
+# B. Google Search Console (Monitor SEO performance)
+#    1. Go to: https://search.google.com/search-console
+#    2. Add property with your URL
+#    3. Submit sitemap: https://YOUR-APP.onrender.com/sitemap.xml
+#    4. (Optional) Add verification meta tag to env
+#
+# C. Bing Webmaster Tools (Additional search traffic)
+#    1. Go to: https://www.bing.com/webmasters
+#    2. Add site (can import from Google Search Console)
+#    3. Submit sitemap: https://YOUR-APP.onrender.com/sitemap.xml
+#
+# D. Create Social Media Images
+#    1. Create og-image.png (1200x630px) for social sharing
+#    2. Create favicon.ico for browser icon
+#    3. Upload to app/static/images/
+#    4. Commit and push to trigger redeploy
+#
+# STEP 5: Optional Features
+# --------------------------
+# A. Sentry Error Tracking (Production monitoring)
+#    1. Create account: https://sentry.io
+#    2. Create new project → Flask
+#    3. Copy DSN to Render env: SENTRY_DSN = your_dsn
+#
+# B. Custom Domain (Better SEO)
+#    1. Purchase domain (e.g., namecheap.com, godaddy.com)
+#    2. In Render Dashboard → Settings → Custom Domains
+#    3. Add domain and update DNS records
+#    4. Update APP_BASE_URL to custom domain
+#    5. Update Google OAuth redirect URIs
+#
+# STEP 6: Post-Deployment SEO Tasks
+# ----------------------------------
+# See SEO_SETUP.md for complete checklist:
+# - Submit to search engines
+# - Create backlinks
+# - Set up social media profiles
+# - Start content marketing
+# - Monitor analytics weekly
+#
+# ============================================
+# Troubleshooting
+# ============================================
+#
+# Build Fails:
+# - Check Render logs for errors
+# - Ensure all dependencies in requirements.txt
+# - Verify Dockerfile syntax
+#
+# OAuth Not Working:
+# - Verify redirect URI matches exactly
+# - Check GOOGLE_CLIENT_ID and SECRET are set
+# - Ensure APP_BASE_URL is correct with https://
+#
+# Database Connection Errors:
+# - Wait for database to finish provisioning
+# - Check DATABASE_URL is auto-populated
+#
+# Sitemap/Robots.txt 404:
+# - Ensure routes are defined in app/__init__.py
+# - Check APP_BASE_URL is set correctly
+#
+# SEO Not Working:
+# - Submit sitemap manually to Google Search Console
+# - Wait 1-2 weeks for indexing
+# - Check robots.txt isn't blocking crawlers
+# - Verify meta tags in page source
+#
+# ============================================
+# Production Recommendations
+# ============================================
+#
+# For production deployment:
+# 1. Upgrade to Starter plan ($7/mo)
+#    - Always-on (no sleeping)
+#    - Better performance
+#    - More resources
+#
+# 2. Upgrade database to Starter ($7/mo)
+#    - 90-day backup retention
+#    - Better performance
+#    - Point-in-time recovery
+#
+# 3. Set up custom domain
+#    - Better branding
+#    - Better SEO (domain authority)
+#    - Professional appearance
+#
+# 4. Enable Sentry monitoring
+#    - Track errors in real-time
+#    - Get notified of issues
+#    - Better user experience
+#
+# 5. Configure backup strategy
+#    - Regular database backups
+#    - Store in separate location
+#    - Test restore procedure
+#
+# ============================================
+# Resources
+# ============================================
+#
+# Render Documentation:
+# - https://render.com/docs
+# - https://render.com/docs/deploy-flask
+# - https://render.com/docs/docker
+#
+# SEO Documentation:
+# - See SEO_GUIDE.md in this repo
+# - See SEO_SETUP.md for step-by-step guide
+#
+# Support:
+# - Render: https://render.com/docs/support
+# - GitHub Issues: [Your repo URL]
 #

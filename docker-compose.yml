@@ -1,130 +1,183 @@
-version: "3.9"
+# ============================================
+# CV Builder - Docker Compose (Local Development)
+# ============================================
+# Use this for local development with Docker
+# Production deployment uses Render.com (see render.yaml)
+
+version: '3.8'
 
 services:
-  # ============================================
-  # Flask Application
-  # ============================================
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: cv-builder-web
-    ports:
-      - "5000:8000"
-    env_file:
-      - .env
-    environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
-      - DATABASE_URL=postgresql://cvbuilder:devpassword@db:5432/cvbuilder
-      - REDIS_URL=redis://redis:6379/0
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    volumes:
-      # Hot reload for development - mount source code
-      - ./app:/app/app
-      - ./migrations:/app/migrations
-      - ./scripts:/app/scripts
-    command: >
-      sh -c "
-        flask db upgrade &&
-        python scripts/seed_templates.py &&
-        gunicorn --bind 0.0.0.0:8000
-                 --workers 1
-                 --threads 2
-                 --reload
-                 --access-logfile -
-                 --error-logfile -
-                 --log-level debug
-                 'app:create_app()'
-      "
-    networks:
-      - cv-builder-network
-    restart: unless-stopped
-
   # ============================================
   # PostgreSQL Database
   # ============================================
   db:
     image: postgres:16-alpine
-    container_name: cv-builder-db
+    container_name: cvbuilder_db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: cvbuilder
       POSTGRES_USER: cvbuilder
-      POSTGRES_PASSWORD: devpassword
+      POSTGRES_PASSWORD: cvbuilder_dev_password
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U cvbuilder"]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - cv-builder-network
-    restart: unless-stopped
 
   # ============================================
-  # Redis Cache & Rate Limiting
+  # Redis Cache & Rate Limiter
   # ============================================
   redis:
     image: redis:7-alpine
-    container_name: cv-builder-redis
+    container_name: cvbuilder_redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - redisdata:/data
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - cv-builder-network
-    restart: unless-stopped
 
   # ============================================
-  # pgAdmin (Database GUI - Optional)
+  # Flask Web Application
   # ============================================
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: cv-builder-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@cvbuilder.local
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    ports:
-      - "5050:80"
-    volumes:
-      - pgadmin:/var/lib/pgadmin
-    depends_on:
-      - db
-    networks:
-      - cv-builder-network
-    profiles:
-      - tools
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cvbuilder_web
     restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Flask settings
+      FLASK_ENV: development
+      FLASK_APP: app:create_app
+
+      # Security
+      SECRET_KEY: dev-secret-key-change-in-production
+      IP_HASH_SALT: dev-salt-change-in-production
+
+      # Database (connects to db service)
+      DATABASE_URL: postgresql://cvbuilder:cvbuilder_dev_password@db:5432/cvbuilder
+
+      # Redis (connects to redis service)
+      REDIS_URL: redis://redis:6379/0
+
+      # Base URL for local development
+      APP_BASE_URL: http://localhost:8000
+
+      # OAuth (set your own values)
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-your_google_client_id_here}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-your_google_client_secret_here}
+      OAUTHLIB_INSECURE_TRANSPORT: "1"  # Allow HTTP for local dev
+
+      # Feature flags
+      MAX_CVS_PER_USER: 10
+      DOWNLOAD_RATE_LIMIT: 5/hour
+      AI_ASSIST_ENABLED: false
+
+      # Optional: Analytics (for testing)
+      GOOGLE_ANALYTICS_ID: ${GOOGLE_ANALYTICS_ID:-}
+
+      # Security (relaxed for local dev)
+      TALISMAN_FORCE_HTTPS: "false"
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      # Mount code for live reload during development
+      - .:/app
+      # Don't mount these
+      - /app/__pycache__
+      - /app/.venv
+      - /app/venv
+    command: >
+      sh -c "
+        echo '⏳ Waiting for database...' &&
+        sleep 5 &&
+        echo '🔧 Initializing database...' &&
+        python -c 'from app import create_app; from app.extensions import db; app = create_app(\"development\"); app.app_context().push(); db.create_all(); print(\"✓ Database initialized\")' &&
+        echo '🚀 Starting development server...' &&
+        gunicorn --bind 0.0.0.0:8000 --workers 1 --threads 2 --reload --access-logfile - --error-logfile - --log-level debug 'app:create_app()'
+      "
 
 # ============================================
 # Volumes
 # ============================================
 volumes:
-  pgdata:
-    driver: local
-  redisdata:
-    driver: local
-  pgadmin:
+  postgres_data:
     driver: local
 
 # ============================================
 # Networks
 # ============================================
 networks:
-  cv-builder-network:
-    driver: bridge
+  default:
+    name: cvbuilder_network
+
+# ============================================
+# Usage Instructions
+# ============================================
+#
+# Quick Start:
+# ------------
+# 1. Set Google OAuth credentials in .env file:
+#    GOOGLE_CLIENT_ID=your_client_id
+#    GOOGLE_CLIENT_SECRET=your_client_secret
+#
+# 2. Start all services:
+#    docker-compose up -d
+#
+# 3. View logs:
+#    docker-compose logs -f web
+#
+# 4. Open browser:
+#    http://localhost:8000
+#
+# 5. Stop all services:
+#    docker-compose down
+#
+# Common Commands:
+# ----------------
+# Build and start:        docker-compose up --build
+# Start in background:    docker-compose up -d
+# Stop services:          docker-compose down
+# View logs:              docker-compose logs -f
+# Restart service:        docker-compose restart web
+# Remove volumes:         docker-compose down -v
+#
+# Database Commands:
+# ------------------
+# Access PostgreSQL:      docker-compose exec db psql -U cvbuilder -d cvbuilder
+# Database backup:        docker-compose exec db pg_dump -U cvbuilder cvbuilder > backup.sql
+# Database restore:       docker-compose exec -T db psql -U cvbuilder -d cvbuilder < backup.sql
+#
+# Redis Commands:
+# ---------------
+# Access Redis CLI:       docker-compose exec redis redis-cli
+# Clear cache:            docker-compose exec redis redis-cli FLUSHALL
+#
+# Troubleshooting:
+# ----------------
+# If services won't start:
+#   docker-compose down -v  # Remove volumes
+#   docker-compose up --build  # Rebuild and start
+#
+# If database errors:
+#   docker-compose exec web python -c "from app import create_app; from app.extensions import db; app = create_app('development'); app.app_context().push(); db.create_all()"
+#
+# Clean slate:
+#   docker-compose down -v --rmi all  # Remove everything
+#   docker-compose up --build  # Start fresh
+#
