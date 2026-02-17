@@ -18,6 +18,13 @@ class Config:
     APP_NAME = "CV Builder"
     APP_BASE_URL = os.environ.get("APP_BASE_URL", "http://localhost:5000")
 
+    # Flask URL generation settings
+    # Extract domain from APP_BASE_URL for SERVER_NAME
+    from urllib.parse import urlparse
+    _parsed_url = urlparse(APP_BASE_URL)
+    SERVER_NAME = _parsed_url.netloc if _parsed_url.netloc else None
+    PREFERRED_URL_SCHEME = _parsed_url.scheme or 'https'
+
     # Database - Force SQLite (override PostgreSQL if present)
     db_url = os.environ.get("DATABASE_URL", "sqlite:///cv_builder.db")
 
