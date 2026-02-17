@@ -13,11 +13,6 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-
-
-# Update font cache for WeasyPrint
-RUN fc-cache -fv
-
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip setuptools wheel && \
