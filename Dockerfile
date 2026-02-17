@@ -13,27 +13,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# Install system dependencies (split into manageable steps)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        # Build essentials
-        gcc \
-        g++ \
-        # PostgreSQL client library
-        libpq-dev \
-        libpq5 \
-        # WeasyPrint dependencies
-        libpango-1.0-0 \
-        libpangoft2-1.0-0 \
-        libpangocairo-1.0-0 \
-        libgdk-pixbuf2.0-0 \
-        libffi-dev \
-        libcairo2 \
-        # Fonts for PDF generation
-        fontconfig \
-        fonts-liberation \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+
 
 # Update font cache for WeasyPrint
 RUN fc-cache -fv
