@@ -6,17 +6,26 @@
 
 services:
   # ============================================
-  # Web Service (Flask App)
+  # Web Service (Flask App - Native Python)
   # ============================================
   - type: web
     name: cv-builder
-    runtime: docker
-    dockerfilePath: ./Dockerfile
+    runtime: python3
     plan: free  # Change to 'starter' or 'standard' for production
     region: oregon  # Choose: oregon, frankfurt, singapore, ohio
     branch: main
     healthCheckPath: /health
     autoDeploy: true
+
+    # Build command - install dependencies
+    buildCommand: |
+      pip install --upgrade pip setuptools wheel
+      pip install -r requirements.txt
+
+    # Start command - initialize DB and run gunicorn
+    startCommand: |
+      python -c "from app import create_app; from app.extensions import db; app = create_app('production'); app.app_context().push(); db.create_all(); print('✓ Database initialized')"
+      gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120 --access-logfile - --error-logfile - --log-level info "app:create_app()"
 
     # Scaling configuration
     scaling:
