@@ -136,44 +136,15 @@
 
 {% block content %}
 <div class="dashboard-header">
-    <div class="user-info">
-        {% if current_user.is_authenticated and current_user.photo_url %}
-        <img src="{{ current_user.photo_url }}" alt="{{ current_user.display_name }}" class="user-avatar" onerror="this.style.display='none'">
-        {% endif %}
-        <div>
-            <h1 style="margin: 0;">{% if current_user.is_authenticated %}My CVs{% else %}CV Builder{% endif %}</h1>
-            {% if current_user.is_authenticated %}
-            <p style="margin: 5px 0 0 0; color: #5f6368;">{{ current_user.email }}</p>
-            {% else %}
-            <p style="margin: 5px 0 0 0; color: #5f6368;">Create professional CVs in minutes</p>
-            {% endif %}
-        </div>
-    </div>
     <div>
-        {% if current_user.is_authenticated %}
-        <a href="/auth/logout" class="btn btn-secondary">Logout</a>
-        {% else %}
-        <a href="/auth/google" class="btn btn-primary">Sign In with Google</a>
-        {% endif %}
+        <h1 style="margin: 0;">CV Builder</h1>
+        <p style="margin: 5px 0 0 0; color: #5f6368;">Create professional CVs in minutes</p>
     </div>
 </div>
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    {% if current_user.is_authenticated %}
-    <p style="color: #5f6368; margin: 0;">
-        {{ cvs|length }} of {{ max_cvs }} CVs created
-    </p>
-    {% if cvs|length < max_cvs %}
+    <p style="color: #5f6368; margin: 0;">{{ cvs|length }} CVs created</p>
     <button onclick="showNewCVModal()" class="btn btn-primary">+ New CV</button>
-    {% else %}
-    <p style="color: #ea4335; margin: 0;">CV limit reached</p>
-    {% endif %}
-    {% else %}
-    <p style="color: #5f6368; margin: 0;">
-        Sign in to create and manage your CVs
-    </p>
-    <button onclick="window.location.href='/auth/google'" class="btn btn-primary">Get Started</button>
-    {% endif %}
 </div>
 
 {% if cvs %}
@@ -191,9 +162,7 @@
             </div>
             <div class="cv-actions">
                 <a href="/cv/{{ cv.id }}/edit" class="btn btn-primary">Edit</a>
-                {% if current_user.is_authenticated %}
                 <button onclick="deleteCV('{{ cv.id }}', '{{ cv.title }}')" class="btn btn-danger">Delete</button>
-                {% endif %}
             </div>
         </div>
     </div>

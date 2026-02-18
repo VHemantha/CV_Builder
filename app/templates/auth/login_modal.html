@@ -1,0 +1,60 @@
+<!-- Login Modal - Include this in pages that need login popup -->
+<div id="loginModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 40px; border-radius: 12px; max-width: 450px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <h2 style="margin: 0 0 24px 0; color: #1a202c; font-size: 24px; text-align: center;">Sign in to continue</h2>
+
+        <form method="POST" action="{{ url_for('auth.login') }}" style="display: flex; flex-direction: column; gap: 16px;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="next" value="{{ request.url }}">
+
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Email</label>
+                <input type="email" name="email" required
+                       style="width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                       placeholder="you@example.com">
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Password</label>
+                <input type="password" name="password" required
+                       style="width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                       placeholder="Enter your password">
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" name="remember_me" id="remember_me" value="y">
+                <label for="remember_me" style="color: #6b7280; font-size: 14px; cursor: pointer;">Remember me</label>
+            </div>
+
+            <button type="submit" style="background: #4285f4; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: 500; font-size: 16px; cursor: pointer;">
+                Sign In
+            </button>
+        </form>
+
+        <div style="margin-top: 20px; text-align: center; color: #6b7280; font-size: 14px;">
+            Don't have an account?
+            <a href="{{ url_for('auth.register') }}" style="color: #4285f4; text-decoration: none; font-weight: 500;">Register</a>
+        </div>
+
+        <button onclick="hideLoginModal()" style="margin-top: 16px; background: #f1f3f4; color: #202124; padding: 10px; border: none; border-radius: 6px; width: 100%; cursor: pointer; font-weight: 500;">
+            Cancel
+        </button>
+    </div>
+</div>
+
+<script>
+function showLoginModal() {
+    document.getElementById('loginModal').style.display = 'flex';
+}
+
+function hideLoginModal() {
+    document.getElementById('loginModal').style.display = 'none';
+}
+
+// Close on outside click
+document.getElementById('loginModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideLoginModal();
+    }
+});
+</script>

@@ -1,103 +1,99 @@
 """
-Authentication routes.
-Google OAuth2 login flow and logout.
+Authentication routes - login, register, logout.
 """
 from datetime import datetime
-from flask import redirect, url_for, flash, request, session
+from flask import redirect, url_for, flash, request, render_template
 from flask_login import login_user, logout_user, current_user
 from app.auth import bp
-from app.auth.oauth import oauth
+from app.auth.forms import LoginForm, RegistrationForm
 from app.extensions import db
 from app.models.user import User
+import uuid
 
 
-@bp.route("/login")
+@bp.route("/login", methods=["GET", "POST"])
 def login():
-    """Display login page with Google OAuth button."""
+    """Handle login - both GET (show form) and POST (process form)."""
     if current_user.is_authenticated:
         return redirect(url_for("cv.dashboard"))
 
-    # Redirect to index which shows the login template
-    return redirect(url_for("index"))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data.lower()).first()
 
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid email or password', 'error')
+            return redirect(url_for('auth.login'))
 
-@bp.route("/google")
-def google_login():
-    """Redirect to Google OAuth2 authorization."""
-    # Generate redirect URI
-    redirect_uri = url_for("auth.google_callback", _external=True)
+        if not user.is_active:
+            flash('Your account has been deactivated. Please contact support.', 'error')
+            return redirect(url_for('auth.login'))
 
-    # Redirect to Google OAuth
-    return oauth.google.authorize_redirect(redirect_uri)
-
-
-@bp.route("/callback")
-def google_callback():
-    """Handle Google OAuth2 callback."""
-    try:
-        # Exchange authorization code for access token
-        token = oauth.google.authorize_access_token()
-
-        # Get user info from Google
-        user_info = token.get('userinfo')
-
-        if not user_info:
-            flash("Failed to get user information from Google.", "error")
-            return redirect(url_for("index"))
-
-        # Extract user data
-        google_id = user_info.get('sub')
-        email = user_info.get('email')
-        display_name = user_info.get('name')
-        photo_url = user_info.get('picture')
-
-        if not google_id or not email:
-            flash("Incomplete user information from Google.", "error")
-            return redirect(url_for("index"))
-
-        # Find or create user
-        user = User.query.filter_by(google_id=google_id).first()
-
-        if user:
-            # Update existing user
-            user.email = email
-            user.display_name = display_name
-            user.photo_url = photo_url
-            user.last_login = datetime.utcnow()
-        else:
-            # Create new user
-            user = User(
-                google_id=google_id,
-                email=email,
-                display_name=display_name,
-                photo_url=photo_url,
-                last_login=datetime.utcnow()
-            )
-            db.session.add(user)
-
+        # Log user in
+        login_user(user, remember=form.remember_me.data)
+        user.last_login = datetime.utcnow()
         db.session.commit()
 
-        # Log the user in
-        login_user(user, remember=True)
-
-        flash(f"Welcome, {user.display_name}!", "success")
+        flash(f'Welcome back, {user.display_name}!', 'success')
 
         # Redirect to intended page or dashboard
         next_page = request.args.get('next')
-        if next_page:
+        if next_page and next_page.startswith('/'):
             return redirect(next_page)
+        return redirect(url_for('cv.dashboard'))
+
+    return render_template('auth/login.html', form=form)
+
+
+@bp.route("/register", methods=["GET", "POST"])
+def register():
+    """Handle user registration."""
+    if current_user.is_authenticated:
         return redirect(url_for("cv.dashboard"))
 
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Authentication failed: {str(e)}", "error")
-        return redirect(url_for("index"))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        # Create new user
+        user = User(
+            id=str(uuid.uuid4()),
+            email=form.email.data.lower(),
+            display_name=form.display_name.data,
+            is_active=True,
+            created_at=datetime.utcnow()
+        )
+        user.set_password(form.password.data)
+
+        db.session.add(user)
+        db.session.commit()
+
+        # Auto-login after registration
+        login_user(user)
+
+        flash(f'Welcome to CV Builder, {user.display_name}!', 'success')
+        return redirect(url_for('cv.dashboard'))
+
+    return render_template('auth/register.html', form=form)
 
 
 @bp.route("/logout")
 def logout():
     """Log out the current user."""
-    user_name = current_user.display_name if current_user.is_authenticated else "User"
-    logout_user()
-    flash(f"Goodbye, {user_name}! You have been logged out successfully.", "success")
+    if current_user.is_authenticated:
+        user_name = current_user.display_name
+        logout_user()
+        flash(f'Goodbye, {user_name}! You have been logged out successfully.', 'success')
     return redirect(url_for("index"))
+
+
+# Google OAuth routes remain disabled
+@bp.route("/google")
+def google_login():
+    """Redirect to regular login (Google OAuth disabled)."""
+    flash('Please use email/password to sign in.', 'info')
+    return redirect(url_for("auth.login"))
+
+
+@bp.route("/callback")
+def google_callback():
+    """Redirect to regular login (Google OAuth disabled)."""
+    return redirect(url_for("auth.login"))

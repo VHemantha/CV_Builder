@@ -22,6 +22,33 @@ if __name__ == '__main__':
         db.create_all()
         print("✓ Database initialized!")
 
+        # Create anonymous user for public access
+        print("\nCreating anonymous system user...")
+        try:
+            from app.models.user import User
+            import uuid
+            from datetime import datetime
+
+            # Check if anonymous user exists
+            existing_user = User.query.filter_by(email='anonymous@system.internal').first()
+            if not existing_user:
+                anonymous_user = User(
+                    id=str(uuid.uuid4()),
+                    google_id='anonymous-system',
+                    email='anonymous@system.internal',
+                    display_name='Anonymous User',
+                    is_active=True,
+                    created_at=datetime.utcnow(),
+                    last_login=datetime.utcnow()
+                )
+                db.session.add(anonymous_user)
+                db.session.commit()
+                print("✓ Anonymous user created!")
+            else:
+                print("✓ Anonymous user already exists!")
+        except Exception as e:
+            print(f"Note: Anonymous user creation skipped ({e})")
+
         # Run seed script
         print("\nSeeding templates...")
         try:
@@ -37,7 +64,7 @@ if __name__ == '__main__':
         print("\n📍 Open your browser to: http://localhost:5000")
         print("\n⚠️  Make sure you've:")
         print("   1. Activated virtual environment: .\\venv\\Scripts\\activate")
-        print("   2. Set Google OAuth credentials in .env")
+        print("\n🎉 No sign-in required! Start building CVs immediately.")
         print("\n✋  Press Ctrl+C to stop the server\n")
 
     # Run the development server
