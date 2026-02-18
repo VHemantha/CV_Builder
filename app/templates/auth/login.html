@@ -324,6 +324,139 @@
         animation: shake 0.4s ease-in-out;
         border-color: var(--error-500);
     }
+
+    /* Error Popup Modal */
+    .error-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        z-index: 3000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .error-modal.show {
+        display: flex;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .error-modal-content {
+        background: white;
+        border-radius: var(--radius-2xl);
+        padding: var(--space-8);
+        max-width: 450px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUpBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        text-align: center;
+        position: relative;
+    }
+
+    @keyframes slideUpBounce {
+        from {
+            opacity: 0;
+            transform: translateY(50px) scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .error-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto var(--space-4);
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        animation: errorPulse 1s ease-out;
+        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+    }
+
+    @keyframes errorPulse {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .error-modal h3 {
+        font-size: var(--text-2xl);
+        color: var(--gray-900);
+        margin: 0 0 var(--space-3) 0;
+        font-weight: 700;
+    }
+
+    .error-modal p {
+        color: var(--gray-600);
+        font-size: var(--text-base);
+        margin: 0 0 var(--space-6) 0;
+        line-height: 1.6;
+    }
+
+    .error-modal-close {
+        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+        color: white;
+        border: none;
+        padding: var(--space-3) var(--space-8);
+        border-radius: var(--radius-lg);
+        font-weight: 600;
+        font-size: var(--text-base);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        box-shadow: var(--shadow-md);
+    }
+
+    .error-modal-close:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .modal-close-x {
+        position: absolute;
+        top: var(--space-4);
+        right: var(--space-4);
+        background: var(--gray-100);
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--gray-600);
+        font-size: 20px;
+        font-weight: bold;
+        transition: all var(--transition-fast);
+    }
+
+    .modal-close-x:hover {
+        background: var(--gray-200);
+        color: var(--gray-900);
+        transform: rotate(90deg);
+    }
 </style>
 {% endblock %}
 
@@ -432,6 +565,17 @@
     </div>
 </div>
 
+<!-- Error Modal -->
+<div id="errorModal" class="error-modal">
+    <div class="error-modal-content">
+        <button class="modal-close-x" onclick="closeErrorModal()">×</button>
+        <div class="error-icon">⚠️</div>
+        <h3>Login Failed</h3>
+        <p id="errorMessage">Invalid email or password. Please try again.</p>
+        <button class="error-modal-close" onclick="closeErrorModal()">Try Again</button>
+    </div>
+</div>
+
 <script>
     // Auto-focus first input
     document.getElementById('email').focus();
@@ -487,11 +631,56 @@
         });
     });
 
-    // Smooth scroll to errors if any
+    // Error Modal Functions
+    function showErrorModal(message) {
+        const modal = document.getElementById('errorModal');
+        const messageElement = document.getElementById('errorMessage');
+
+        if (message) {
+            messageElement.textContent = message;
+        }
+
+        modal.classList.add('show');
+
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            closeErrorModal();
+        }, 5000);
+    }
+
+    function closeErrorModal() {
+        const modal = document.getElementById('errorModal');
+        modal.classList.remove('show');
+    }
+
+    // Close modal on outside click
+    document.getElementById('errorModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeErrorModal();
+        }
+    });
+
+    // ESC key to close modal
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeErrorModal();
+        }
+    });
+
+    // Check for errors on page load and show modal
     window.addEventListener('load', function() {
-        const errorElement = document.querySelector('.form-error');
-        if (errorElement) {
-            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Check for flash messages (error messages from server)
+        const flashMessages = document.querySelectorAll('.alert-error');
+        if (flashMessages.length > 0) {
+            const errorText = flashMessages[0].textContent.trim();
+            showErrorModal(errorText);
+        }
+
+        // Check for form validation errors
+        const formErrors = document.querySelectorAll('.form-error');
+        if (formErrors.length > 0) {
+            const errorText = formErrors[0].textContent.trim();
+            showErrorModal(errorText);
         }
     });
 </script>

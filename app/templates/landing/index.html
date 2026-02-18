@@ -6,15 +6,6 @@
 
 {% block extra_css %}
 <style>
-    :root {
-        --primary: #4285f4;
-        --primary-dark: #3367d6;
-        --success: #34a853;
-        --gray-50: #f9fafb;
-        --gray-100: #f3f4f6;
-        --gray-900: #111827;
-    }
-
     body {
         margin: 0;
         padding: 0;
@@ -29,70 +20,265 @@
         border-radius: 0;
     }
 
-    /* Hero Section */
+    /* Modern Navigation */
+    .nav-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 1rem 2rem;
+        z-index: 1000;
+        animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .nav-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-logo {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .nav-btn {
+        padding: 0.5rem 1.5rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .nav-btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .nav-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .nav-btn-secondary {
+        color: #667eea;
+        border: 2px solid #667eea;
+        background: transparent;
+    }
+
+    .nav-btn-secondary:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    /* Hero Section with Enhanced Design */
     .hero {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 80px 20px;
+        padding: 140px 20px 100px;
         text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-top: 70px;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float 20s infinite;
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -10%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float 15s infinite reverse;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(30px, -30px) rotate(120deg); }
+        66% { transform: translate(-20px, 20px) rotate(240deg); }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 900px;
+        margin: 0 auto;
     }
 
     .hero h1 {
-        font-size: 48px;
+        font-size: 56px;
         margin: 0 0 20px 0;
-        font-weight: 700;
+        font-weight: 800;
         line-height: 1.2;
         color: white;
+        animation: fadeInUp 0.8s ease-out;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .hero .subtitle {
-        font-size: 24px;
-        margin: 0 0 30px 0;
+        font-size: 28px;
+        margin: 0 0 20px 0;
         opacity: 0.95;
+        color: white;
+        font-weight: 600;
+        animation: fadeInUp 1s ease-out;
     }
 
     .hero p {
-        font-size: 18px;
+        font-size: 20px;
         max-width: 700px;
         margin: 0 auto 40px;
         line-height: 1.6;
         opacity: 0.9;
+        color: white;
+        animation: fadeInUp 1.2s ease-out;
     }
 
     .cta-button {
         display: inline-block;
         background: white;
         color: #667eea;
-        padding: 18px 40px;
-        border-radius: 8px;
+        padding: 20px 50px;
+        border-radius: 50px;
         text-decoration: none;
-        font-weight: 600;
-        font-size: 18px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-        transition: transform 0.2s;
+        font-weight: 700;
+        font-size: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        animation: fadeInUp 1.4s ease-out, pulse 2s infinite;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(102, 126, 234, 0.1);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .cta-button:hover::before {
+        width: 300px;
+        height: 300px;
     }
 
     .cta-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
     }
 
-    /* Features Section */
+    @keyframes pulse {
+        0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        50% { box-shadow: 0 10px 40px rgba(102, 126, 234, 0.5); }
+    }
+
+    /* Trust Badges */
+    .trust-badges {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 50px;
+        flex-wrap: wrap;
+        animation: fadeInUp 1.6s ease-out;
+    }
+
+    .trust-badge {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: white;
+        font-size: 16px;
+        opacity: 0.9;
+    }
+
+    .trust-badge-icon {
+        font-size: 24px;
+    }
+
+    /* Features Section with Cards */
     .features {
-        padding: 80px 20px;
-        background: var(--gray-50);
+        padding: 100px 20px;
+        background: linear-gradient(180deg, #f9fafb 0%, white 100%);
     }
 
     .features h2 {
         text-align: center;
-        font-size: 36px;
-        margin: 0 0 50px 0;
-        color: var(--gray-900);
+        font-size: 48px;
+        margin: 0 0 20px 0;
+        color: #111827;
+        font-weight: 800;
+    }
+
+    .features-subtitle {
+        text-align: center;
+        font-size: 20px;
+        color: #6b7280;
+        margin: 0 0 60px 0;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .features-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 30px;
         max-width: 1200px;
         margin: 0 auto;
@@ -100,107 +286,105 @@
 
     .feature-card {
         background: white;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        border-color: rgba(102, 126, 234, 0.3);
     }
 
     .feature-icon {
-        font-size: 48px;
+        font-size: 64px;
         margin-bottom: 20px;
+        display: inline-block;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .feature-card:hover .feature-icon {
+        animation: none;
+        transform: scale(1.1);
     }
 
     .feature-card h3 {
-        font-size: 22px;
+        font-size: 24px;
         margin: 0 0 15px 0;
-        color: var(--gray-900);
+        color: #111827;
+        font-weight: 700;
     }
 
     .feature-card p {
-        color: #666;
-        line-height: 1.6;
+        color: #6b7280;
+        line-height: 1.7;
         margin: 0;
-    }
-
-    /* SEO Content Section */
-    .seo-content {
-        padding: 80px 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .seo-content h2 {
-        font-size: 36px;
-        margin: 0 0 30px 0;
-        color: var(--gray-900);
-    }
-
-    .seo-content h3 {
-        font-size: 28px;
-        margin: 40px 0 20px 0;
-        color: var(--gray-900);
-    }
-
-    .seo-content p {
-        font-size: 18px;
-        line-height: 1.8;
-        color: #444;
-        margin: 0 0 20px 0;
-    }
-
-    .seo-content ul {
-        font-size: 18px;
-        line-height: 1.8;
-        color: #444;
-        margin: 0 0 20px 0;
-        padding-left: 30px;
-    }
-
-    .seo-content li {
-        margin-bottom: 10px;
+        font-size: 16px;
     }
 
     /* Templates Showcase */
     .templates {
-        padding: 80px 20px;
-        background: var(--gray-50);
+        padding: 100px 20px;
+        background: white;
     }
 
     .templates h2 {
         text-align: center;
-        font-size: 36px;
-        margin: 0 0 50px 0;
-        color: var(--gray-900);
+        font-size: 48px;
+        margin: 0 0 60px 0;
+        color: #111827;
+        font-weight: 800;
     }
 
     .templates-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 30px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
         max-width: 1200px;
         margin: 0 auto;
     }
 
     .template-card {
         background: white;
-        border-radius: 12px;
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s ease;
+        cursor: pointer;
     }
 
     .template-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(102, 126, 234, 0.3);
     }
 
     .template-preview {
-        height: 200px;
+        height: 250px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 64px;
+        font-size: 80px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .template-preview::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
     }
 
     .template-preview.clean {
@@ -216,139 +400,316 @@
     }
 
     .template-info {
-        padding: 20px;
+        padding: 30px;
         text-align: center;
+        background: white;
     }
 
     .template-info h3 {
         margin: 0 0 10px 0;
-        font-size: 20px;
-        color: var(--gray-900);
+        font-size: 24px;
+        color: #111827;
+        font-weight: 700;
     }
 
     .template-info p {
         margin: 0;
-        color: #666;
-        font-size: 14px;
+        color: #6b7280;
+        font-size: 15px;
+        line-height: 1.6;
     }
 
     /* CTA Section */
     .cta-section {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 80px 20px;
+        padding: 100px 20px;
         text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
+        opacity: 0.3;
     }
 
     .cta-section h2 {
-        font-size: 42px;
+        font-size: 52px;
         margin: 0 0 20px 0;
         color: white;
+        font-weight: 800;
+        position: relative;
+        z-index: 1;
     }
 
     .cta-section p {
-        font-size: 20px;
-        margin: 0 0 40px 0;
-        opacity: 0.9;
-    }
-
-    /* FAQ Section */
-    .faq {
-        padding: 80px 20px;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .faq h2 {
-        text-align: center;
-        font-size: 36px;
+        font-size: 24px;
         margin: 0 0 50px 0;
-        color: var(--gray-900);
+        opacity: 0.95;
+        color: white;
+        position: relative;
+        z-index: 1;
     }
 
-    .faq-item {
-        margin-bottom: 30px;
-        background: var(--gray-50);
-        padding: 25px;
-        border-radius: 8px;
+    /* Stats Section */
+    .stats {
+        background: #111827;
+        color: white;
+        padding: 60px 20px;
     }
 
-    .faq-item h3 {
-        font-size: 22px;
-        margin: 0 0 15px 0;
-        color: var(--gray-900);
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 40px;
+        max-width: 1000px;
+        margin: 0 auto;
+        text-align: center;
     }
 
-    .faq-item p {
+    .stat-item h3 {
+        font-size: 48px;
+        margin: 0 0 10px 0;
+        color: white;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-item p {
         font-size: 16px;
-        line-height: 1.7;
-        color: #444;
         margin: 0;
+        opacity: 0.8;
+        color: white;
+    }
+
+    /* Modern Footer */
+    footer {
+        background: #0f172a;
+        color: white;
+        padding: 60px 20px 30px;
+    }
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        margin-bottom: 40px;
+    }
+
+    footer h3, footer h4 {
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    footer p {
+        line-height: 1.8;
+        opacity: 0.8;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    footer ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        line-height: 2.5;
+    }
+
+    footer a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    footer a:hover {
+        color: #667eea;
+        padding-left: 5px;
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 30px;
+        text-align: center;
     }
 
     @media (max-width: 768px) {
-        .hero h1 {
-            font-size: 32px;
+        .nav-bar {
+            padding: 1rem;
         }
+
+        .nav-buttons {
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .hero {
+            padding: 100px 20px 60px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+        }
+
         .hero .subtitle {
+            font-size: 20px;
+        }
+
+        .hero p {
+            font-size: 16px;
+        }
+
+        .cta-button {
+            padding: 16px 40px;
             font-size: 18px;
         }
-        .features h2, .templates h2, .seo-content h2, .faq h2 {
-            font-size: 28px;
+
+        .features h2, .templates h2, .cta-section h2 {
+            font-size: 36px;
+        }
+
+        .trust-badges {
+            gap: 20px;
+        }
+    }
+
+    /* Scroll Animation */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInScroll 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeInScroll {
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Modern Navigation -->
+<nav class="nav-bar">
+    <div class="nav-content">
+        <div class="nav-logo">CV Builder</div>
+        <div class="nav-buttons">
+            <a href="{{ url_for('auth.login') }}" class="nav-btn nav-btn-secondary">Sign In</a>
+            <a href="{{ url_for('cv.dashboard') }}" class="nav-btn nav-btn-primary">Get Started Free</a>
+        </div>
+    </div>
+</nav>
+
 <!-- Hero Section -->
 <section class="hero">
-    <h1>Free CV Builder - Create Professional Resumes Online</h1>
-    <p class="subtitle">Build Your Dream Career with Our Free Resume Maker</p>
-    <p>Create stunning, ATS-friendly resumes in minutes with our powerful yet simple CV builder. Completely free, no hidden charges, no credit card required. Start building your professional resume today!</p>
-    <a href="/cv/dashboard" class="cta-button">Start Building Your Free Resume →</a>
+    <div class="hero-content">
+        <h1>Create Professional Resumes in Minutes</h1>
+        <p class="subtitle">Your Dream Job Starts Here</p>
+        <p>Build stunning, ATS-friendly resumes with our powerful yet simple CV builder. Completely free, no hidden charges, no credit card required.</p>
+        <a href="{{ url_for('cv.dashboard') }}" class="cta-button">Start Building Free →</a>
+
+        <div class="trust-badges">
+            <div class="trust-badge">
+                <span class="trust-badge-icon">✓</span>
+                <span>100% Free Forever</span>
+            </div>
+            <div class="trust-badge">
+                <span class="trust-badge-icon">⚡</span>
+                <span>ATS-Optimized</span>
+            </div>
+            <div class="trust-badge">
+                <span class="trust-badge-icon">🔒</span>
+                <span>Secure & Private</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <h3>10,000+</h3>
+            <p>Resumes Created</p>
+        </div>
+        <div class="stat-item">
+            <h3>98%</h3>
+            <p>ATS Pass Rate</p>
+        </div>
+        <div class="stat-item">
+            <h3>100%</h3>
+            <p>Free Forever</p>
+        </div>
+        <div class="stat-item">
+            <h3>5★</h3>
+            <p>User Rating</p>
+        </div>
+    </div>
 </section>
 
 <!-- Features Section -->
 <section class="features">
-    <h2>Why Choose Our Free CV Builder?</h2>
+    <h2>Why Choose Our CV Builder?</h2>
+    <p class="features-subtitle">Everything you need to create a professional resume that gets you hired</p>
+
     <div class="features-grid">
         <div class="feature-card">
             <div class="feature-icon">🆓</div>
             <h3>100% Free Forever</h3>
-            <p>Our resume builder is completely free to use. No premium tiers, no hidden costs. Create unlimited CVs and download them as PDF absolutely free.</p>
+            <p>No premium tiers, no hidden costs. Create unlimited CVs and download them as PDF absolutely free.</p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">⚡</div>
             <h3>ATS-Friendly Templates</h3>
-            <p>All our CV templates are optimized for Applicant Tracking Systems (ATS). Increase your chances of getting past automated screening and landing interviews.</p>
+            <p>Optimized for Applicant Tracking Systems. Increase your chances of getting past automated screening.</p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">🎨</div>
-            <h3>Professional Templates</h3>
-            <p>Choose from beautiful, professionally designed resume templates. Modern, executive, and clean designs to match any industry or career level.</p>
+            <h3>Professional Design</h3>
+            <p>Beautiful, professionally designed templates. Modern, executive, and clean designs for any industry.</p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">⚙️</div>
             <h3>Easy to Use</h3>
-            <p>Our intuitive CV builder makes creating resumes simple. Fill in your information, choose a template, and download. No design skills needed!</p>
+            <p>Intuitive interface makes creating resumes simple. No design skills needed, just fill and download!</p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">📱</div>
             <h3>Works Anywhere</h3>
-            <p>Create your resume on any device - desktop, tablet, or mobile. Our responsive design ensures a seamless experience across all screen sizes.</p>
+            <p>Create on any device - desktop, tablet, or mobile. Responsive design for seamless experience.</p>
         </div>
+
         <div class="feature-card">
             <div class="feature-icon">🚀</div>
             <h3>Instant PDF Download</h3>
-            <p>Download your professional resume as a PDF instantly. Print-ready format that looks great both on screen and on paper.</p>
+            <p>Download professional PDF instantly. Print-ready format that looks great on screen and paper.</p>
         </div>
     </div>
 </section>
 
 <!-- Templates Showcase -->
 <section class="templates">
-    <h2>Professional Resume Templates - 100% Free</h2>
+    <h2>Professional Templates - 100% Free</h2>
+
     <div class="templates-grid">
         <div class="template-card">
             <div class="template-preview clean">📄</div>
@@ -357,6 +718,7 @@
                 <p>Minimalist design optimized for ATS systems. Perfect for corporate and tech jobs.</p>
             </div>
         </div>
+
         <div class="template-card">
             <div class="template-preview modern">📄</div>
             <div class="template-info">
@@ -364,6 +726,7 @@
                 <p>Contemporary design with vibrant colors. Great for creative and startup roles.</p>
             </div>
         </div>
+
         <div class="template-card">
             <div class="template-preview executive">📄</div>
             <div class="template-info">
@@ -374,161 +737,90 @@
     </div>
 </section>
 
-<!-- SEO Content Section -->
-<section class="seo-content">
-    <h2>The Best Free Resume Builder Online - CV Maker 2026</h2>
-
-    <p>Looking for a <strong>free resume builder</strong> that actually works? You've found it! Our CV builder is designed to help job seekers create professional, ATS-friendly resumes without spending a dime. Whether you're a recent graduate, experienced professional, or career changer, our <strong>free CV maker</strong> has everything you need to land your dream job.</p>
-
-    <h3>What is a Resume Builder?</h3>
-    <p>A <strong>resume builder</strong> (also called a <strong>CV builder</strong> or <strong>resume maker</strong>) is an online tool that helps you create professional resumes quickly and easily. Instead of starting from scratch in a word processor, our <strong>online resume builder</strong> provides templates, formatting, and guidance to help you craft the perfect CV.</p>
-
-    <h3>Key Features of Our Free CV Builder:</h3>
-    <ul>
-        <li><strong>Free Resume Templates:</strong> Choose from professionally designed templates that are 100% free to use and download</li>
-        <li><strong>ATS-Friendly Formatting:</strong> Our templates are optimized to pass Applicant Tracking Systems used by 98% of Fortune 500 companies</li>
-        <li><strong>Real-Time Preview:</strong> See your resume update in real-time as you make changes</li>
-        <li><strong>PDF Export:</strong> Download your resume as a professional PDF with one click</li>
-        <li><strong>No Sign-Up Required:</strong> Start building immediately - no account creation needed</li>
-        <li><strong>Mobile-Friendly:</strong> Create your resume on any device, anywhere, anytime</li>
-        <li><strong>Privacy-First:</strong> Your data is secure and never shared with third parties</li>
-    </ul>
-
-    <h3>How to Create a Professional Resume with Our Free CV Builder:</h3>
-    <p>Creating a professional resume has never been easier. Follow these simple steps to build your CV in minutes:</p>
-    <ul>
-        <li><strong>Step 1:</strong> Click "Start Building Your Free Resume" and choose a template</li>
-        <li><strong>Step 2:</strong> Fill in your personal information, work experience, and education</li>
-        <li><strong>Step 3:</strong> Add your skills and customize your professional summary</li>
-        <li><strong>Step 4:</strong> Preview your resume in real-time</li>
-        <li><strong>Step 5:</strong> Download your professional resume as PDF</li>
-    </ul>
-
-    <h3>Why Use a Free Online Resume Builder?</h3>
-    <p>Building a resume from scratch can be time-consuming and frustrating. Our <strong>free resume creator</strong> solves common problems like:</p>
-    <ul>
-        <li><strong>Formatting Issues:</strong> No more wrestling with margins, spacing, and alignment</li>
-        <li><strong>ATS Compatibility:</strong> Ensure your resume gets past automated screening systems</li>
-        <li><strong>Professional Design:</strong> Access to designer-quality templates without hiring a professional</li>
-        <li><strong>Time Savings:</strong> Create a complete resume in 15 minutes instead of hours</li>
-        <li><strong>Cost Efficiency:</strong> Save hundreds compared to professional resume writing services</li>
-    </ul>
-
-    <h3>Best Practices for Resume Writing in 2026:</h3>
-    <p>To create the most effective resume using our <strong>CV builder free</strong> tool, follow these expert tips:</p>
-    <ul>
-        <li>Use action verbs to describe your accomplishments (achieved, led, developed, increased)</li>
-        <li>Quantify your achievements with numbers and percentages</li>
-        <li>Tailor your resume to each job application</li>
-        <li>Keep it concise - aim for 1-2 pages maximum</li>
-        <li>Use a clean, professional font and consistent formatting</li>
-        <li>Include relevant keywords from the job description</li>
-        <li>Proofread carefully for grammar and spelling errors</li>
-    </ul>
-
-    <h3>Who Should Use Our Free Resume Builder?</h3>
-    <p>Our <strong>professional resume builder</strong> is perfect for:</p>
-    <ul>
-        <li><strong>Recent Graduates:</strong> Create your first professional resume with ease</li>
-        <li><strong>Career Changers:</strong> Highlight transferable skills for a new industry</li>
-        <li><strong>Experienced Professionals:</strong> Update your resume with modern formatting</li>
-        <li><strong>Job Seekers:</strong> Apply to multiple positions with customized resumes</li>
-        <li><strong>Freelancers:</strong> Showcase your portfolio of work and projects</li>
-        <li><strong>Students:</strong> Build internship and entry-level job applications</li>
-    </ul>
-</section>
-
-<!-- FAQ Section -->
-<section class="faq">
-    <h2>Frequently Asked Questions - Free Resume Builder</h2>
-
-    <div class="faq-item">
-        <h3>Is this resume builder really free?</h3>
-        <p>Yes! Our CV builder is 100% free with no hidden charges, premium tiers, or credit card required. You can create unlimited resumes and download them all for free.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Do I need to create an account?</h3>
-        <p>No account is required! Start building your resume right away. All CVs are saved automatically and accessible from any device.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Are these resume templates ATS-friendly?</h3>
-        <p>Absolutely! All our templates are optimized for Applicant Tracking Systems (ATS). They use standard formatting, clear section headers, and proper structure to ensure your resume gets past automated screening.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Can I download my resume as PDF?</h3>
-        <p>Yes! You can download your resume as a professional PDF file that's ready to email to employers or upload to job boards. The PDF is print-ready and looks great on all devices.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>How long does it take to create a resume?</h3>
-        <p>Most users complete their resume in 15-30 minutes. Our intuitive interface and pre-designed templates make the process quick and easy, even if you've never created a resume before.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Can I edit my resume after downloading?</h3>
-        <p>Yes! Your resumes are saved automatically and you can edit them anytime. Make unlimited changes and download fresh PDFs whenever needed.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>What's the difference between a CV and a resume?</h3>
-        <p>In the US, a resume is typically 1-2 pages and used for most jobs. A CV (Curriculum Vitae) is longer and used for academic or research positions. Our builder works great for both! Outside the US, CV and resume are often used interchangeably.</p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Is my data secure?</h3>
-        <p>Yes, we take privacy seriously. Your data is encrypted and stored securely. We never sell or share your information with third parties. You can delete your data anytime.</p>
-    </div>
-</section>
-
 <!-- Final CTA -->
 <section class="cta-section">
-    <h2>Ready to Build Your Professional Resume?</h2>
-    <p>Join thousands of job seekers who landed their dream jobs with our free CV builder</p>
-    <a href="/cv/dashboard" class="cta-button">Create Your Free Resume Now →</a>
+    <h2>Ready to Build Your Resume?</h2>
+    <p>Join thousands who landed their dream jobs</p>
+    <a href="{{ url_for('cv.dashboard') }}" class="cta-button">Create Your Free Resume →</a>
 </section>
 
-<!-- SEO Footer -->
-<footer style="background: #1a202c; color: white; padding: 60px 20px 20px; margin-top: 0;">
-    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
+<!-- Modern Footer -->
+<footer>
+    <div class="footer-content">
         <div>
-            <h3 style="font-size: 20px; margin: 0 0 20px 0; color: white;">CV Builder</h3>
-            <p style="line-height: 1.6; opacity: 0.8; margin: 0;">Create professional resumes and CVs online for free. ATS-friendly templates, instant PDF download, no sign-up required.</p>
+            <h3>CV Builder</h3>
+            <p>Create professional resumes and CVs online for free. ATS-friendly templates, instant PDF download, no sign-up required.</p>
         </div>
         <div>
-            <h4 style="font-size: 16px; margin: 0 0 15px 0; color: white;">Quick Links</h4>
-            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
-                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Home</a></li>
-                <li><a href="/cv/dashboard" style="color: rgba(255,255,255,0.8); text-decoration: none;">Dashboard</a></li>
-                <li><a href="/cv/dashboard" style="color: rgba(255,255,255,0.8); text-decoration: none;">Create Resume</a></li>
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('cv.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('cv.dashboard') }}">Create Resume</a></li>
+                <li><a href="{{ url_for('auth.login') }}">Sign In</a></li>
             </ul>
         </div>
         <div>
-            <h4 style="font-size: 16px; margin: 0 0 15px 0; color: white;">Resources</h4>
-            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
-                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Free Resume Templates</a></li>
-                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Resume Writing Tips</a></li>
-                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">ATS Guide</a></li>
-                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">FAQ</a></li>
+            <h4>Resources</h4>
+            <ul>
+                <li><a href="#">Resume Templates</a></li>
+                <li><a href="#">Writing Tips</a></li>
+                <li><a href="#">ATS Guide</a></li>
+                <li><a href="#">FAQ</a></li>
             </ul>
         </div>
         <div>
-            <h4 style="font-size: 16px; margin: 0 0 15px 0; color: white;">Popular Searches</h4>
-            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2;">
-                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Free Resume Builder</a></li>
-                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">CV Builder Free</a></li>
-                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Resume Maker Online</a></li>
-                <li><a href="/" style="color: rgba(255,255,255,0.8); text-decoration: none;">Professional CV Templates</a></li>
+            <h4>Popular</h4>
+            <ul>
+                <li><a href="#">Free Resume Builder</a></li>
+                <li><a href="#">CV Builder Free</a></li>
+                <li><a href="#">Resume Maker</a></li>
+                <li><a href="#">CV Templates</a></li>
             </ul>
         </div>
     </div>
-    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; text-align: center;">
-        <p style="opacity: 0.6; margin: 0; font-size: 14px;">
-            © 2026 CV Builder. Free Resume Builder & Professional CV Maker Online. All rights reserved.<br>
-            <span style="font-size: 12px;">Keywords: free resume builder, cv builder free, resume maker, professional resume builder, online cv maker, ATS resume templates</span>
+
+    <div class="footer-bottom">
+        <p style="opacity: 0.7; margin: 0;">
+            © 2026 CV Builder. Free Resume Builder & Professional CV Maker Online. All rights reserved.
         </p>
     </div>
 </footer>
+
+<script>
+// Smooth scroll animation on scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in');
+        }
+    });
+}, observerOptions);
+
+// Observe feature cards and template cards
+document.querySelectorAll('.feature-card, .template-card').forEach(el => {
+    observer.observe(el);
+});
+
+// Navbar scroll effect
+let lastScroll = 0;
+const navbar = document.querySelector('.nav-bar');
+
+window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+
+    if (currentScroll > 100) {
+        navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+    } else {
+        navbar.style.boxShadow = 'none';
+    }
+
+    lastScroll = currentScroll;
+});
+</script>
 {% endblock %}
