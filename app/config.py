@@ -96,16 +96,17 @@ class Config:
 
     # Monitoring
     SENTRY_DSN = os.environ.get("SENTRY_DSN")
+    GOOGLE_ANALYTICS_ID = os.environ.get("GOOGLE_ANALYTICS_ID", "G-YL3EMZEKYK")
 
     # Flask-Talisman (CSP and security headers)
     TALISMAN_FORCE_HTTPS = os.environ.get("FLASK_ENV") == "production"
     TALISMAN_CONTENT_SECURITY_POLICY = {
         "default-src": "'self'",
-        "script-src": ["'self'", "'unsafe-inline'"],  # For inline preview scripts
+        "script-src": ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com"],  # For inline scripts & Google Analytics
         "style-src": ["'self'", "'unsafe-inline'"],  # For dynamic styles
-        "img-src": ["'self'", "data:", "https://lh3.googleusercontent.com"],  # Google profile pics
+        "img-src": ["'self'", "data:", "https://lh3.googleusercontent.com", "https://www.google-analytics.com"],  # Profile pics & GA
         "font-src": "'self'",
-        "connect-src": "'self'",
+        "connect-src": ["'self'", "https://www.google-analytics.com", "https://www.googletagmanager.com"],  # GA data
         "frame-ancestors": "'none'",
     }
 
