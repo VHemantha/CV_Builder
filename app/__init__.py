@@ -192,6 +192,17 @@ Sitemap: {app.config['APP_BASE_URL']}/sitemap.xml
         response.headers["Content-Type"] = "text/plain"
         return response
 
+    # ads.txt for Google AdSense
+    @app.route("/ads.txt")
+    def ads_txt():
+        """Serve ads.txt for Google AdSense verification."""
+        from flask import make_response
+
+        content = "google.com, pub-9172775909086222, DIRECT, f08c47fec0942fa0\n"
+        response = make_response(content)
+        response.headers["Content-Type"] = "text/plain"
+        return response
+
     # Health check endpoint (for Docker/Render)
     @app.route("/health")
     @limiter.exempt
